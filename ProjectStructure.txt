@@ -1,0 +1,30 @@
+HealthTracker/
+├── backend/                  # Backend: Node.js + Express + MongoDB
+│   ├── node_modules/         # Thư viện cài bằng npm
+│   ├── src/                  # Code chính của backend
+│   │   ├── config/           # Cấu hình (DB, env)
+│   │   │   ├── db.js
+│   │   ├── controllers/      # Logic xử lý API
+│   │   ├── models/           # Định nghĩa database schema
+│   │   ├── routes/           # Định nghĩa các route API
+│   │   ├── middleware/       # Xử lý auth, logs,...
+│   │   ├── utils/            # Hàm tiện ích
+│   │   ├── server.js         # File chính khởi chạy server
+│   ├── .env                  # Chứa biến môi trường (MongoDB URI, port,...)
+│   ├── .gitignore            # Loại trừ file không cần thiết khi push lên GitHub
+│   ├── package.json          # Quản lý dependencies của backend
+│   ├── README.md             # Mô tả backend
+│
+├── frontend/                 # Frontend: React Native (Expo Go)
+│   ├── assets/               # Ảnh, icon, font chữ
+│   ├── components/           # Các component chung
+│   ├── screens/              # Màn hình chính của app
+│   ├── navigation/           # Cấu hình navigation giữa các màn hình
+│   ├── services/             # Xử lý API gọi về backend
+│   ├── App.js                # Điểm khởi đầu của app
+│   ├── app.json              # Cấu hình Expo Go
+│   ├── package.json          # Quản lý dependencies của frontend
+│   ├── README.md             # Mô tả frontend
+│
+├── .gitignore                # Loại bỏ file không cần khi push lên GitHub
+├── README.md                 # Mô tả tổng quan project

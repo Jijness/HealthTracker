@@ -15,7 +15,7 @@ yarn-error.log*
 
 # Build output
 dist/
-build/
+build/  
 *.tsbuildinfo
 
 # Temporary files

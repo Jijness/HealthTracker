@@ -1,17 +1,17 @@
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+import express, { json } from 'express';
+import { connect } from 'mongoose';
+import { config } from 'dotenv';
 
-dotenv.config(); // Load .env file
+config(); // Load .env file
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(express.json());
+app.use(json());
 
 // MongoDB Connect
-mongoose.connect(process.env.MONGO_URI, {
+connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })

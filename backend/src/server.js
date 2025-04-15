@@ -1,23 +1,21 @@
 import express, { json } from 'express';
-import bodyParser from 'body-parser'
 import { connect } from 'mongoose';
 import { port, hostname } from './config/env.js';
 import HttpError from './models/http_error.js';
 
 
-import placeRouter from './routes/places_routes.js';
-import userRouter from './routes/user_routes.js';
-import authRouter from './routes/auth_routes.js';
+import placeRoutes from './routes/places_routes.js';
+import userRoutes from './routes/user_routes.js';
+import authRoutes from './routes/auth_routes.js';
 
 const app = express();
-
-app.use('/api/v1/auth', authRouter);
-app.use('/api/v1/users', userRouter);
-
-
-
 // Middleware
-app.use(bodyParser.json());
+app.use(express.json());
+
+app.use('/api/auth', authRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/places', placeRoutes);
+
 
 // MongoDB Connect
 // connect(process.env.MONGO_URI, {
@@ -27,8 +25,7 @@ app.use(bodyParser.json());
 //     .then(() => console.log("MongoDB connected"))
 //     .catch(err => console.error("MongoDB connection error:", err));
 
-// Test route
-app.use('/api/places', placeRouter);
+
 
 app.use((req, res,next) => {
     const error = new HttpError('Could not find this route.', 404);

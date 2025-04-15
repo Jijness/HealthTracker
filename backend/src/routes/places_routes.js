@@ -1,15 +1,26 @@
 import { Router } from 'express';
 import placeController from '../controllers/places-controller.js';
+import { check } from 'express-validator';
+
+const placeRoutes = Router();
 
 
-const placeRouter = Router();
 
+placeRoutes.get('/:pid', placeController.getPlaceById);
 
+placeRoutes.get('/user/:uid', placeController.getPlacesByUserId);
 
-placeRouter.get('/:pid', placeController.getPlaceById);
-placeRouter.get('/user/:uid', placeController.getPlacesByUserId);
-placeRouter.post('/', placeController.createPlace);
-placeRouter.patch('/:pid', placeController.updatePlace);
-placeRouter.delete('/:pid', placeController.deletePlace);
+placeRoutes.post('/',
+    [
+        check('title').not().isEmpty(),
+        check('description').isLength({ min: 5 }),
+        check('address').not().isEmpty()
+    ],
+    placeController.createPlace
+);
 
-export default placeRouter;
+placeRoutes.patch('/:pid', placeController.updatePlace);
+
+placeRoutes.delete('/:pid', placeController.deletePlace);
+
+export default placeRoutes;

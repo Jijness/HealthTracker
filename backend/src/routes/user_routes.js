@@ -1,16 +1,29 @@
 import { Router } from 'express';
+import userController from '../controllers/users_controller.js';
 import User from '../models/User.js';
+import { check } from 'express-validator';
 
-const userRouter = Router();
+const userRoutes = Router();
 
-userRouter.get('/', (req, res) => res.send({ title: 'GET all users' }));
+userRoutes.get('/', userController.getUsers);
 
-userRouter.get('/:id', (req, res) => res.send({ title: 'GET user details' }));
 
-userRouter.post('/', (req, res) => res.send({ title: 'CREATE new user' }));
+userRoutes.post('/register',
+    [
+        check('name').not().isEmpty(),
+        check('email')
+            .normalizeEmail() // Test@gmail.com => test@gmail.com
+            .isEmail(),
+        check('password').isLength({ min: 6 })
+    ],
+    userController.register
+);
 
-userRouter.put('/:id', (req, res) => res.send({ title: 'UPDATE user' }));
+userRoutes.post('/login', userController.login);
 
-userRouter.delete('/:id', (req, res) => res.send({ title: 'DELETE users' }));
 
-export default userRouter;
+// userRoutes.put('/:id', );
+
+// userRoutes.delete('/:id', );
+
+export default userRoutes;

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { genSalt, hash, compare } from 'bcryptjs';
 import User from '../models/User.js';
 
-const authRouter = Router();
+const authRoutes = Router();
 // register
 // authRouter.post('/register', async (req, res) => {
 //   const { username, password, height, weight, activityLevel } = req.body;
@@ -28,7 +28,7 @@ const authRouter = Router();
 //     res.status(500).json({ error: err.message });
 //   }
 // });
-authRouter.post('/register', async (req, res) => res.send({ title: 'Register' }));
+authRoutes.post('/register', async (req, res) => res.send({ title: 'Register' }));
 
 // Login
 // authRouter.post('/login', async (req, res) => {
@@ -48,9 +48,9 @@ authRouter.post('/register', async (req, res) => res.send({ title: 'Register' })
 //     res.status(500).json({ error: err.message });
 //   }
 // });
-authRouter.post('/login', async (req, res) => res.send({ title: 'Login' }));
+authRoutes.post('/login', async (req, res) => res.send({ title: 'Login' }));
 
 // Logout
-authRouter.post('/logout', async (req, res) => res.send({ title: 'Logout' }));
+authRoutes.post('/logout', async (req, res) => res.send({ title: 'Logout' }));
 
-export default authRouter;
+export default authRoutes;

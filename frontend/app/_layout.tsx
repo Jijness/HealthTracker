@@ -1,34 +1,20 @@
-import { Stack } from "expo-router";
+import { Slot } from 'expo-router';
+import 'react-native-reanimated';
+import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { useColorScheme } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { StatusBar } from 'expo-status-bar';
 import './global.css';
+
 export default function RootLayout() {
-  return(
-  <Stack>
-    <Stack.Screen
-      name="(tabs)"
-      options={{
-        headerShown:false, 
-      }}
-    />
-    <Stack.Screen
-      name="index"
-      options={{
-        title:"Intro",
-        headerShown:false,
-      }}
-    />
-    <Stack.Screen
-      name="register"
-      options={{
-        title:"Register",
-        headerShown:false,
-      }}
-    />
-    <Stack.Screen
-      name="login"
-      options={{
-        title:"Login",
-        headerShown:false,
-      }}
-    />
-  </Stack>)
+  const colorScheme = useColorScheme();
+
+  return (
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <StatusBar style="auto" />
+        <Slot />
+      </ThemeProvider>
+    </GestureHandlerRootView>
+  );
 }

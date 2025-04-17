@@ -3,10 +3,10 @@ import { port, hostname } from './config/env.js';
 import connectDB from './config/mongoose.js';
 import HttpError from './models/http_error.js';
 
-import placeRoutes from './routes/places_routes.js';
-import userRoutes from './routes/user_routes.js';
+import placeRoutes from './routes/placesRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 import authRoutes from './routes/auth_routes.js';
-import healthSnapRoutes from './routes/healthSnap_routes.js';
+import healthSnapRoutes from './routes/healthSnapRoutes.js';
 
 
 const app = express();

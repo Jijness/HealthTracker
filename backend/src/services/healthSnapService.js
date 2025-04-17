@@ -1,18 +1,27 @@
-import HealthSnap from "../models/HealthSnap";
-import HttpError from "../models/http_error";
+import HealthSnap from "../models/HealthSnap.js";
+import mongoose from "mongoose";
 
 const getAllHealthSnapByUser = async (userId) => {
-    return await HealthSnap.find({ user: userId }).sort({ Date: -1 });
+    return await HealthSnap
+        .find({ user: new mongoose.Types.ObjectId(userId) })
+        .sort({ createdAt: -1 });
 };
 
 const createHealthSnap = async ({ user, weight, height, bodyFat, muscleMass, note }) => {
-    const newSnap = new HealthSnap({ user, weight, height, bodyFat, muscleMass, note });
+    const newSnap = new HealthSnap({
+        user,
+        weight,
+        height,
+        bodyFat,
+        muscleMass,
+        note
+    });
     await newSnap.save();
     return newSnap;
 };
 
 const getHealthSnapById = async (snapId) => {
-    return await HealthSnap.find(snapId);
+    return await HealthSnap.findById(snapId);
 };
 
 const updateHealthSnap = async (snapId, data) => {

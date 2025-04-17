@@ -5,7 +5,7 @@ import userService from '../services/userService.js';
 const getUsers = async (req, res, next) => {
     try {
         const users = await userService.getAllUsers();
-        res.status(200).json({ users});
+        res.status(200).json({ users });
     } catch (err) {
         next((err));
     }
@@ -17,7 +17,7 @@ const register = async (req, res, next) => {
         return next(new HttpError('Invalid inputs passed, please check your data.', 422));
     }
 
-    const { email, password, username } = req.body;
+    const { username, email, password } = req.body;
 
     try {
         const newUser = await userService.registerUser({ email, password, username });
@@ -29,7 +29,7 @@ const register = async (req, res, next) => {
 
 const login = async (req, res, next) => {
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
         // return next(new HttpError('Could not identify user, credentials seem to be wrong.', 401));
         return next(new HttpError('Invalid credentials', 401));
     }
@@ -37,9 +37,21 @@ const login = async (req, res, next) => {
 
     try {
         const token = await userService.loginUser(email, password);
-        // res.status(200).json({ message: "Logged in", token });
-        res.status(200).json({ message: "Logged in" });
+        res.status(200).json({ message: "Logged in", token });
 
+    } catch (err) {
+        next(err);
+    }
+};
+
+const deleteUser = async (req, res, next) => {
+    const userId = req.params.uid;
+    try {
+        const result = await userService.deleteUser(userId);
+        if (!result) {
+            return next(new HttpError('User not found.', 404));
+        }
+        res.status(200).json({ message: 'User deleted successfully.' });
     } catch (err) {
         next(err);
     }
@@ -48,5 +60,6 @@ const login = async (req, res, next) => {
 export default {
     getUsers,
     register,
-    login
+    login,
+    deleteUser
 };

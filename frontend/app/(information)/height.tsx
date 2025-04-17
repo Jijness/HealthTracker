@@ -75,7 +75,7 @@ const HeightPickerScreen = () => {
 
         <View style={styles.highlightLine} />
       </View>
-      <Link href="./weight">
+      <Link href="./weight" asChild>
         <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Next</Text> 
          </TouchableOpacity>

@@ -41,7 +41,7 @@ export default function LoginScreen() {
       <Text style={styles.subHeader}>Enter your email to sign in for this app</Text>
       <TextInput placeholder="username" value={username} onChangeText={setUsername} style={styles.input} autoCapitalize="none" autoCorrect={false} />
       <TextInput placeholder="password" value={password} onChangeText={setPassword} style={styles.input} secureTextEntry autoCapitalize="none" autoCorrect={false} />
-      <Link href="/(information)/age" asChild>
+      <Link href="/(information)/gender" asChild>
       <TouchableOpacity style={styles.continueButton} onPress={handleLogin}>
         <Text style={styles.continueText}>Login</Text>
       </TouchableOpacity>

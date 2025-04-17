@@ -46,7 +46,7 @@ export default function GenderScreen() {
 
       <View style={styles.bottom}>
         {selectedGender ? (
-            <Link href="./age">
+            <Link href="./age" asChild>
             <TouchableOpacity style={styles.nextButton}>
               <Text style={styles.nextButtonText}>Next</Text>
             </TouchableOpacity>

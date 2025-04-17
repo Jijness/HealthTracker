@@ -75,7 +75,7 @@ const AgePickerScreen = () => {
 
         <View style={styles.highlightLine} />
       </View>
-      <Link href="./height">
+      <Link href="./height" asChild>
         <TouchableOpacity style={styles.button}>
               <Text style={styles.buttonText}>Next</Text>
          </TouchableOpacity>

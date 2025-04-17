@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import placeController from '../controllers/places-controller.js';
+import placeController from '../controllers/placesController.js';
 import { check } from 'express-validator';
 
 const placeRoutes = Router();

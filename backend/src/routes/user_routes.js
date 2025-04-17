@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import userController from '../controllers/users_controller.js';
+import userController from '../controllers/usersController.js';
 import User from '../models/User.js';
 import { check } from 'express-validator';
 
@@ -10,7 +10,7 @@ userRoutes.get('/', userController.getUsers);
 
 userRoutes.post('/register',
     [
-        check('name').not().isEmpty(),
+        check('name').notEmpty(),
         check('email')
             .normalizeEmail() // Test@gmail.com => test@gmail.com
             .isEmail(),
@@ -19,7 +19,13 @@ userRoutes.post('/register',
     userController.register
 );
 
-userRoutes.post('/login', userController.login);
+userRoutes.post('/login',
+    [
+        check('email')
+        .normalizeEmail()
+        .isEmail()
+    ],
+    userController.login);
 
 
 // userRoutes.put('/:id', );

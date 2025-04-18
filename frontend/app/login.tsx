@@ -3,9 +3,24 @@ import { useState } from 'react';
 import { images } from "@/constants/images"
 import { icons } from '@/constants/icon'
 import { Link } from 'expo-router';
+
+import { loginUser } from '@/services/api';
+
 export default function RegisterScreen() {
-  const [username, setUsername] = useState('');
+  // const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+
   const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const res = await loginUser({ email, password });
+      // Xử lý lưu token / chuyển trang
+    } catch (err: any) {
+      console.error('Lỗi đăng nhập:', err.response?.data || err.message);
+    }
+  };
+
 
   return (
     <View style={styles.container}>
@@ -19,10 +34,12 @@ export default function RegisterScreen() {
       <Text style={styles.header}>Sign in to this App</Text>
       <Text style={styles.subHeader}>Enter your email to sign in for this app</Text>
       <TextInput
-        placeholder="username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="email"
+        value={email}
+        onChangeText={setEmail}
         style={styles.input}
+        keyboardType='email-address'
+        autoCapitalize='none'
       />
       <TextInput
         placeholder="password"

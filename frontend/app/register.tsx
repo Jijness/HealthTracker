@@ -3,10 +3,25 @@ import { useState } from 'react';
 import { images } from "@/constants/images"
 import { icons } from '@/constants/icon'
 import { Link } from 'expo-router';
+
+import { registerUser } from '@/services/api';
+
+
 export default function RegisterScreen() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const handleRegister = async () => {
+    try {
+      const res = await registerUser({ username, email, password });
+      console.log('Đăng ký thành công:', res.data);
+      // TODO: chuyển trang hoặc thông báo cho người dùng
+    } catch (err: any) {
+      console.error('Lỗi khi đăng ký:', err.response?.data || err.message);
+      // TODO: hiển thị thông báo lỗi cho người dùng
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -47,7 +62,7 @@ export default function RegisterScreen() {
       />
 
       {/* Nút Continue */}
-      <TouchableOpacity style={styles.continueButton}>
+      <TouchableOpacity style={styles.continueButton} onPress={handleRegister}>
         <Text style={styles.continueText}>Continue</Text>
       </TouchableOpacity>
 

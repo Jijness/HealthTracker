@@ -64,7 +64,6 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  // giống như phần trên
   container: {
     flex: 1,
     backgroundColor: '#F3F4F6',

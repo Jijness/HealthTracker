@@ -6,11 +6,11 @@ const { height } = Dimensions.get('window');
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
-const HeightPickerScreen = () => {
+const WeightPickerScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [selectedHeight, setSelectedHeight] = useState(40);
+  const [selectedWeight, setSelectedWeight] = useState(40);
 
-  const height = Array.from({ length: 100 }, (_, i) => i + 30);
+  const weight = Array.from({ length: 100 }, (_, i) => i + 100);
   const listRef = useRef<FlatList<number>>(null); 
 
   const onScroll = Animated.event(
@@ -21,7 +21,7 @@ const HeightPickerScreen = () => {
   const onMomentumScrollEnd = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const index = Math.round(offsetY / ITEM_HEIGHT);
-    setSelectedHeight(height[index]);
+    setSelectedWeight(weight[index]);
     if (listRef.current) {
       listRef.current.scrollToOffset({ offset: index * ITEM_HEIGHT, animated: true });
     }
@@ -37,7 +37,7 @@ const HeightPickerScreen = () => {
 
         <Animated.FlatList
           ref={listRef}
-          data={height}
+          data={weight}
           keyExtractor={(item) => item.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -67,7 +67,7 @@ const HeightPickerScreen = () => {
 
             return (
               <Animated.View style={[styles.itemContainer, { opacity, transform: [{ scale }] }]}>
-                <Text style={styles.itemText}>{item} Kg</Text>
+                <Text style={styles.itemText}>{item} cm</Text>
               </Animated.View>
             );
           }}
@@ -75,11 +75,11 @@ const HeightPickerScreen = () => {
 
         <View style={styles.highlightLine} />
       </View>
-      <Link href="./weight" asChild>
+      <Link href="/(Home)/home" asChild>
         <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Next</Text> 
+              <Text style={styles.buttonText}>Next</Text>
          </TouchableOpacity>
-       </Link>
+      </Link>
     </View>
   );
 };
@@ -143,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeightPickerScreen;
+export default WeightPickerScreen;

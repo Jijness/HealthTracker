@@ -1,3 +1,4 @@
+
 import React, { useRef, useState } from 'react';
 import { View, Text,TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions } from 'react-native';
 import { Link } from 'expo-router';
@@ -6,11 +7,11 @@ const { height } = Dimensions.get('window');
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
-const WeightPickerScreen = () => {
+const HeightPickerScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [selectedWeight, setSelectedWeight] = useState(40);
+  const [selectedHeight, setSelectedHeight] = useState(40);
 
-  const weight = Array.from({ length: 100 }, (_, i) => i + 100);
+  const height = Array.from({ length: 100 }, (_, i) => i + 30);
   const listRef = useRef<FlatList<number>>(null); 
 
   const onScroll = Animated.event(
@@ -21,7 +22,7 @@ const WeightPickerScreen = () => {
   const onMomentumScrollEnd = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const index = Math.round(offsetY / ITEM_HEIGHT);
-    setSelectedWeight(weight[index]);
+    setSelectedHeight(height[index]);
     if (listRef.current) {
       listRef.current.scrollToOffset({ offset: index * ITEM_HEIGHT, animated: true });
     }
@@ -37,7 +38,7 @@ const WeightPickerScreen = () => {
 
         <Animated.FlatList
           ref={listRef}
-          data={weight}
+          data={height}
           keyExtractor={(item) => item.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -67,7 +68,7 @@ const WeightPickerScreen = () => {
 
             return (
               <Animated.View style={[styles.itemContainer, { opacity, transform: [{ scale }] }]}>
-                <Text style={styles.itemText}>{item} cm</Text>
+                <Text style={styles.itemText}>{item} Kg</Text>
               </Animated.View>
             );
           }}
@@ -75,11 +76,11 @@ const WeightPickerScreen = () => {
 
         <View style={styles.highlightLine} />
       </View>
-      <Link href="/(Home)/home" asChild>
+      <Link href="./weight" asChild>
         <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Next</Text>
+              <Text style={styles.buttonText}>Next</Text> 
          </TouchableOpacity>
-      </Link>
+       </Link>
     </View>
   );
 };
@@ -143,4 +144,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WeightPickerScreen;
+export default HeightPickerScreen;

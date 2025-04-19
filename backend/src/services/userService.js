@@ -34,18 +34,44 @@ const loginUser = async (email, password) => {
 
     if (!isValid) throw new HttpError("Invalid credentials", 401);
     console.log('Login success!');
+
     const token = jwt.sign(
         { userId: user.id, email: user.email },
         process.env.JWT_SECRET,
         { expiresIn: '1h' }
     );
+    const isFirstLogin = !user.gender || !user.birth_year || !user.activity_level;
 
-    return token;
+    return {
+        username: user.username,
+        token,
+        isFirstLogin
+    };
+};
+
+const updateInfor = async (userId, data) => {
+    const updated = await User.findByIdAndUpdate(
+        userId,
+        { ...data },
+        { new: true, runValidators: true }
+    );
+    if (!updated) {
+        throw new HttpError('User not found', 404);
+    }
+    return {
+        id: updated.id,
+        email: updated.email,
+        username: updated.username,
+        gender: updated.gender,
+        birth_year: updated.birth_year,
+        /* activityLevel: updated.activityLevel, */
+        role: updated.role
+    }
 };
 
 const deleteUser = async (userId) => {
     // Xoa healthsnap truoc
-    await HealthSnap.deleteMany({user: userId});
+    await HealthSnap.deleteMany({ user: userId });
     // Roi moi xoa user
     return await User.findByIdAndDelete(userId);
 };
@@ -54,5 +80,6 @@ export default {
     getAllUsers,
     registerUser,
     loginUser,
+    updateInfor,
     deleteUser
 };

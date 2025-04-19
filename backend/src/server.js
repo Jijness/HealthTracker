@@ -15,8 +15,8 @@ await connectDB();
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: '*',  // Chấp nhận tất cả các domain
-  methods: ['GET', 'POST'],
+    origin: '*',  // '*' Chấp nhận tất cả các domain
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
   credentials: true
 }));
 

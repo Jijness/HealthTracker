@@ -15,7 +15,15 @@ const userSchema = new mongoose.Schema({
         type: String,
         enum: ["male", "female"],
     },
-    dob: Date,
+    birth_year: {
+        type: Number,
+        min: 1900,
+        max: new Date().getFullYear(),
+    },
+    activity_level: {
+        type: String,
+        enum: ["sedentary", "light", "moderate", "active", "very_active"]
+    },
     is_verified: {
         type: Boolean, default: false,
     },

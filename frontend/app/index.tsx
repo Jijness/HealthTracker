@@ -11,7 +11,7 @@ export default function App() {
         <Text style={styles.subtitle}>Health is your life</Text>
       </View>
       <View style={styles.bottomSection}>
-      <Link href="./register" asChild>
+      <Link href="./(authenticate)/login" asChild>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Start</Text>
       </TouchableOpacity>
@@ -24,7 +24,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#FDBD10',
     paddingHorizontal: 20,
     justifyContent: 'space-between',
     paddingVertical: 60, 
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 15,
-    color: '#C0C0C0',
+    color: '#ffffff',
     textAlign: 'center',
   },
   bottomSection: {

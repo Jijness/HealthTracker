@@ -31,8 +31,8 @@ userRoutes.post('/login',
 userRoutes.patch('/updateInfor', checkAuth,
     [
         check('gender').isIn(['male', 'female']),
-        check('birth_year').isInt({ min: 1900, max: new Date().getFullYear() })
-        // check('activityLevel').isIn(['sedentary','light','moderate','active','very_active'])
+        check('birth_year').isInt({ min: 1900, max: new Date().getFullYear() }),
+        check('activity_level').isIn(['sedentary', 'light', 'moderate', 'active', 'very_active'])
     ],
     userController.updateInfor
 );

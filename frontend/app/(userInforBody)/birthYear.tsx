@@ -85,7 +85,7 @@ const BirthYearPickerScreen = () => {
         onPress={() => {
           router.push({
             pathname: '/(userInforBody)/activityLevel',
-            params: { gender, birthYear: selectedYear.toString() },
+            params: { gender, birth_year: selectedYear.toString() },
           });
         }}
       >

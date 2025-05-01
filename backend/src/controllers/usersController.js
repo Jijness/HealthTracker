@@ -53,13 +53,13 @@ const updateInfor = async (req, res, next) => {
     if (!errors.isEmpty()) {
         return next(new HttpError('Invalid inputs,', 422));
     }
-    const { gender, birth_year/*, activityLevel*/ } = req.body;
+    const { gender, birth_year, activity_level } = req.body;
     const userId = req.user.userId; // gan tu checkAuth
     try {
         const updated = await userService.updateInfor(userId, {
             gender,
-            birth_year: parseInt(birth_year)
-            /*, activityLevel*/
+            birth_year: parseInt(birth_year),
+            activity_level
         });
         res.status(200).json({ user: updated });
     } catch (err) {

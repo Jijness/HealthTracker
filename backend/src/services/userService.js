@@ -64,7 +64,7 @@ const updateInfor = async (userId, data) => {
         username: updated.username,
         gender: updated.gender,
         birth_year: updated.birth_year,
-        /* activityLevel: updated.activityLevel, */
+        activityLevel: updated.activity_level,
         role: updated.role
     }
 };

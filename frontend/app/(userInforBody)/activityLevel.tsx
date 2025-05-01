@@ -6,24 +6,24 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ACTIVITY_LEVELS = [
-    { label: "Ngồi nhiều", value: "sedentary" },
-    { label: "Vận động nhẹ", value: "light" },
-    { label: "Vận động vừa", value: "moderate" },
-    { label: "Năng động", value: "active" },
-    { label: "Rất năng động", value: "very_active" },
+    { label: "Sedentary", value: "sedentary" },
+    { label: "Light", value: "light" },
+    { label: "Moderate", value: "moderate" },
+    { label: "Active", value: "active" },
+    { label: "Very active", value: "very_active" },
 ];
 
 export default function ActivityLevelScreen() {
     const [selected, setSelected] = useState<string | null>(null);
     const router = useRouter();
-    const params = useLocalSearchParams<{ gender?: string; birthYear?: string }>();
+    const params = useLocalSearchParams<{ gender?: string; birth_year?: string }>();
     const gender = params.gender ?? '';
-    const birthYear = params.birthYear ?? '';
+    const birth_year = params.birth_year ?? '';
 
 
     const handleSubmit = async () => {
         if (!selected) {
-            Alert.alert("Hãy chọn mức độ hoạt động của bạn!");
+            Alert.alert("Choose your activity level!");
             return;
         }
 
@@ -31,8 +31,8 @@ export default function ActivityLevelScreen() {
             const token = await AsyncStorage.getItem('token');
             const res = await axios.patch(`${API_BASE_URL}/users/updateInfor`, {
                 gender,
-                birthYear,
-                activityLevel: selected,
+                birth_year: parseInt(birth_year, 10),
+                activity_level: selected,
             }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -45,14 +45,14 @@ export default function ActivityLevelScreen() {
                 });
             }
         } catch (error) {
-            Alert.alert("Có lỗi xảy ra! Thử lại sau.");
+            Alert.alert("Error, try again later!");
         }
 
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Chọn mức độ hoạt động của bạn</Text>
+            <Text style={styles.title}>Choose your activity level</Text>
             <View style={styles.buttonContainer}>
                 {ACTIVITY_LEVELS.map((item) => (
                     <TouchableOpacity
@@ -69,7 +69,7 @@ export default function ActivityLevelScreen() {
             </View>
 
             <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-                <Text style={styles.submitButtonText}>Tiếp theo</Text>
+                <Text style={styles.submitButtonText}>Next</Text>
             </TouchableOpacity>
         </View>
     );

@@ -1,18 +1,26 @@
 
 import React, { useRef, useState } from 'react';
-import { View, Text,TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions } from 'react-native';
-import { Link } from 'expo-router';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions, Alert } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import API_BASE_URL from '../../apiConfig';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const { height } = Dimensions.get('window');
+
+const { height: windowHeight } = Dimensions.get('window');
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
-const HeightPickerScreen = () => {
+const WeightPickerScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [selectedHeight, setSelectedHeight] = useState(40);
+  const [selectedWeight, setSelectedWeight] = useState(50);
+  const router = useRouter();
+  const listRef = useRef<FlatList<number>>(null);
+  const params = useLocalSearchParams<{ height?: string }>();
+  const heightParam = params.height ?? '';
 
-  const height = Array.from({ length: 100 }, (_, i) => i + 30);
-  const listRef = useRef<FlatList<number>>(null); 
+  const weightData = Array.from({ length: 120 }, (_, i) => i + 30);
+
 
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -22,9 +30,36 @@ const HeightPickerScreen = () => {
   const onMomentumScrollEnd = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const index = Math.round(offsetY / ITEM_HEIGHT);
-    setSelectedHeight(height[index]);
+    setSelectedWeight(weightData[index]);
     if (listRef.current) {
       listRef.current.scrollToOffset({ offset: index * ITEM_HEIGHT, animated: true });
+    }
+  };
+
+  const handleSubmit = async () => {
+    const h = parseInt(heightParam, 10);
+    const w = selectedWeight;
+    if (isNaN(h) || isNaN(w)) {
+      Alert.alert('Invalid height or weight!');
+      return;
+    }
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) throw new Error('No auth token found!');
+
+      const res = await axios.post(`${API_BASE_URL}/healthSnap/`, {
+        height: h,
+        weight: w,
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (res.status === 201) {
+        router.replace('/(home)/home');
+      }
+    } catch (error: any) {
+      console.log('HealthSnap API error:', error.response?.status, error.response?.data);
+      Alert.alert('Error', error.response?.data?.message || 'Try again later');
     }
   };
 
@@ -38,7 +73,7 @@ const HeightPickerScreen = () => {
 
         <Animated.FlatList
           ref={listRef}
-          data={height}
+          data={weightData}
           keyExtractor={(item) => item.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -55,16 +90,8 @@ const HeightPickerScreen = () => {
               index * ITEM_HEIGHT,
               (index + 2) * ITEM_HEIGHT,
             ];
-            const opacity = scrollY.interpolate({
-              inputRange,
-              outputRange: [0.4, 1, 0.4],
-              extrapolate: 'clamp',
-            });
-            const scale = scrollY.interpolate({
-              inputRange,
-              outputRange: [0.8, 1.2, 0.8],
-              extrapolate: 'clamp',
-            });
+            const opacity = scrollY.interpolate({ inputRange, outputRange: [0.4, 1, 0.4], extrapolate: 'clamp' });
+            const scale = scrollY.interpolate({ inputRange, outputRange: [0.8, 1.2, 0.8], extrapolate: 'clamp' });
 
             return (
               <Animated.View style={[styles.itemContainer, { opacity, transform: [{ scale }] }]}>
@@ -76,11 +103,9 @@ const HeightPickerScreen = () => {
 
         <View style={styles.highlightLine} />
       </View>
-      <Link href="./weight" asChild>
-        <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Next</Text> 
-         </TouchableOpacity>
-       </Link>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+        <Text style={styles.buttonText}>Next</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -144,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HeightPickerScreen;
+export default WeightPickerScreen;

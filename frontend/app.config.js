@@ -17,7 +17,8 @@ export default {
       adaptiveIcon: {
         foregroundImage: "./assets/images/logo.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      package: "com.jijness.healthtracker"
     },
     web: {
       bundler: "metro",
@@ -41,7 +42,7 @@ export default {
       typedRoutes: true
     },
     extra: {
-      apiUrl: process.env.API_BASE_URL 
+      apiUrl: process.env.API_BASE_URL
     }
   }
 }

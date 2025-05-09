@@ -26,8 +26,8 @@ const RootLayout = () => {
                   <Stack.Screen name="(information)" />
                   <Stack.Screen name="(userFirstSnap)" />
                   <Stack.Screen name="(usetInforBody)" /> 
-                  <Stack.Screen name="(tabs)" />  
-                  <Stack.Screen name="index" />
+                  <Stack.Screen name="(tabs)" />
+                  <Stack.Screen name="(index)" />
                 </Stack>
             </ThemeProvider>
         </GestureHandlerRootView>

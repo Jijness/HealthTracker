@@ -1,32 +1,65 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+
+const tabData = ['Daily Summary', 'Workouts', 'Energy Efficiency', 'Plan work'];
 
 export default function TabSelector() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <View style={styles.tabContainer}>
-      <Text style={[styles.tab, styles.activeTab]}>Daily Summary</Text>
-      <Text style={styles.tab}>Workouts</Text>
-      <Text style={styles.tab}>Energy Efficiency</Text>
+    <View style={styles.container}>
+      <FlatList
+        horizontal
+        data={tabData}
+        keyExtractor={(item, index) => index.toString()}
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.flatListContent}
+        renderItem={({ item, index }) => (
+          <TouchableOpacity
+            onPress={() => setActiveIndex(index)}
+            style={[
+              styles.tab,
+              index === activeIndex && styles.activeTab,
+            ]}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                index === activeIndex && styles.activeTabText,
+              ]}
+            >
+              {item}
+            </Text>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  tabContainer: {
-    flexDirection: 'row',
+  container: {
     marginTop: 20,
-    marginBottom: 10,
+  },
+  flatListContent: {
+    paddingHorizontal: 16, // ⬅️ tạo khoảng trống ở hai đầu
   },
   tab: {
-    marginRight: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
     backgroundColor: '#E5E7EB',
+    paddingVertical: 6,
+    paddingHorizontal: 16,
     borderRadius: 20,
-    fontSize: 14,
+    marginRight: 10,
   },
   activeTab: {
     backgroundColor: 'black',
+  },
+  tabText: {
+    fontSize: 14,
+    color: 'black',
+  },
+  activeTabText: {
     color: 'white',
+    fontWeight: '600',
   },
 });

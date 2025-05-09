@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import { SafeAreaView, ScrollView, StyleSheet, View ,Text} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, ScrollView, StyleSheet, View, Text } from 'react-native';
 import Header from '../(home)/header';
 import HealthCard from '../(home)/healthCard'
 import ActivitySummary from '../(home)/activitySummary';
@@ -22,8 +22,8 @@ export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <Header/>
-        <TabS/>
+        <Header />
+        <TabS />
         <HealthCard />
         <ActivitySummary />
       </ScrollView>
@@ -36,8 +36,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFC730',
   },
-  hello:{
-    fontSize:14,
-    margin:10
+  hello: {
+    fontSize: 14,
+    margin: 10
   }
 });

@@ -22,18 +22,12 @@ const RootLayout = () => {
                     headerShown: false,
                   }}
                 >
-<<<<<<< HEAD
                   <Stack.Screen name="(authentic)" />
                   <Stack.Screen name="(information)" />
                   <Stack.Screen name="(userFirstSnap)" />
                   <Stack.Screen name="(usetInforBody)" /> 
-                  <Stack.Screen name="(tabs)" />  
-=======
                   <Stack.Screen name="(tabs)" />
-                  <Stack.Screen name="(authentic)" />
-                  <Stack.Screen name="(information)" />
->>>>>>> 2c7b14e54ceb0f147796277cad1a037775fd4c9b
-                  <Stack.Screen name="index" />
+                  <Stack.Screen name="(index)" />
                 </Stack>
             </ThemeProvider>
         </GestureHandlerRootView>

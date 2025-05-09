@@ -1,27 +1,33 @@
 import React from 'react';
-import { View, Text, StyleSheet,Image } from 'react-native';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import {images} from "@/constants/images"
-import {icons} from "@/constants/icon"
+import { icons } from '@/constants/icon';
+import { ProgressBar } from 'react-native-paper';
+
 export default function HealthCard() {
   return (
     <View style={styles.card}>
       <View style={styles.topRow}>
-        <Image source={icons.heart} style={styles.icon} />
+        <View style={styles.iconCircle}>
+          <Image source={icons.heart} style={styles.icon} />
+        </View>
         <Ionicons name="qr-code" size={24} color="white" />
       </View>
       <Text style={styles.status}>You are healthy</Text>
-      <Text style={styles.percentage}>70%</Text>
-      <Text style={styles.subtext}>Keep it up! Healthy lifestyle on track</Text>
+      <View style={styles.progressContainer}>
+        <Text style={styles.percentage}>70%</Text>
+        <View style={styles.progressSection}>
+          <ProgressBar progress={0.5} color="#FDD835" style={styles.progressBar} />
+          <Text style={styles.subtext}>Keep it up! Healthy lifestyle on track</Text>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    width:370,
-    height:228,
-    backgroundColor: 'red',
+    backgroundColor: '#E53935',
     borderRadius: 16,
     padding: 20,
     margin: 10,
@@ -29,26 +35,48 @@ const styles = StyleSheet.create({
   topRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  iconCircle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 24,
+    height: 24,
+    tintColor: 'black',
   },
   status: {
     color: 'white',
     fontSize: 16,
-    marginVertical: 6,
+    fontStyle: 'italic',
+    marginVertical: 8,
   },
   percentage: {
     color: 'white',
     fontSize: 32,
     fontWeight: 'bold',
+    marginRight: 16,
+  },
+  progressContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  progressSection: {
+    flex: 1,
+  },
+  progressBar: {
+    height: 8,
+    borderRadius: 10,
+    backgroundColor: '#fff3',
+    marginBottom: 4,
   },
   subtext: {
-    color: 'white',
-    fontSize: 14,
+    color: '#FFF',
+    fontSize: 13,
   },
-  icon: {
-    width: 40,
-    height: 40,
-    backgroundColor: 'red',
-    borderRadius: 10,
-    padding: 10,
-  }
 });

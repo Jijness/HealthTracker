@@ -5,7 +5,7 @@ import HealthCard from '../(home)/healthCard'
 import ActivitySummary from '../(home)/activitySummary';
 import TabS from '../(home)/tabSelector';
 export default function Home() {
-  // const [username, setUsername]= useState(null1);
+  // const [username, setUsername]= useState(null);
   // useEffect(()=>{
   //   const fetchUser= async () =>{
   //     try {

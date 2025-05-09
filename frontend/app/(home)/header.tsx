@@ -1,47 +1,72 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
-import {images} from "@/constants/images"
-import {icons} from "@/constants/icon"
+import { View, Image, StyleSheet, Text } from 'react-native';
+import { images } from '@/constants/images';
+import { icons } from '@/constants/icon';
+
 export default function Header() {
   return (
-    <View style={styles.header}>
-      <Image source={images.logo} style={styles.icon} />
-      <Image source={icons.bell} style={styles.bell}/>
-      <Image source={icons.user} style={styles.avatar} />
+    <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image source={images.logo} style={styles.logo} />
+        <Text style={styles.appName}>Health Tracker</Text>
+      </View>
+      <View style={styles.rightIcons}>
+        <View style={styles.bellWrapper}>
+          <Image source={icons.bell} style={styles.bellIcon} />
+        </View>
+        <Image source={icons.user} style={styles.avatar} />
+      </View>
     </View>
   );
 }
+
 const styles = StyleSheet.create({
-  header: {
+  container: {
     flexDirection: 'row',
-    margin: 20,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 10,
+    backgroundColor: '#FFC72C',
   },
-  icon: {
+  logoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  logo: {
     width: 40,
     height: 40,
-    backgroundColor: 'red',
     borderRadius: 10,
-    padding: 10,
+    marginRight: 8,
   },
-  greeting: {
-    fontSize: 20,
-    fontWeight: '600',
+  appName: {
+    fontSize: 18,
+    fontWeight: '700',
     color: '#000',
   },
-  name: {
-    fontWeight: 'bold',
+  rightIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  bell:{
-    width:40,
-    height:40,
-    left:240,
-    marginRight:10
+  bellWrapper: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#F3E7C9',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  bellIcon: {
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
+    tintColor: '#000',
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    left:240,
-    marginRight:10
   },
 });

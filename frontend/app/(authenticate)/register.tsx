@@ -79,7 +79,7 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  // ... giữ nguyên như cũ
+
   container: {
     flex: 1,
     backgroundColor: '#F3F4F6',

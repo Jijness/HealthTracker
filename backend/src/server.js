@@ -4,9 +4,9 @@ import connectDB from './config/mongoose.js';
 import cors from 'cors';
 import HttpError from './models/http_error.js';
 
-import placeRoutes from './routes/placesRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import healthSnapRoutes from './routes/healthSnapRoutes.js';
+import dailyStatRoutes from './routes/dailyStatRoutes.js';
 
 
 const app = express();
@@ -16,15 +16,14 @@ await connectDB();
 app.use(express.json());
 app.use(cors({
     origin: '*',  // '*' Chấp nhận tất cả các domain
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-  credentials: true
+    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+    credentials: true
 }));
 
 // Routes
 app.use('/api/users', userRoutes);
-app.use('/api/places', placeRoutes);
 app.use('/api/healthSnap', healthSnapRoutes);
-
+app.use('/api/dailyStat', dailyStatRoutes);
 
 
 app.use((req, res, next) => {

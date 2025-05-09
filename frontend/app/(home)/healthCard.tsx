@@ -13,7 +13,7 @@ export default function HealthCard() {
         </View>
         <Ionicons name="qr-code" size={24} color="white" />
       </View>
-      <Text style={styles.status}>You are healthy</Text>
+      <Text style={styles.status}>You are healthy1</Text>
       <View style={styles.progressContainer}>
         <Text style={styles.percentage}>70%</Text>
         <View style={styles.progressSection}>

@@ -8,7 +8,7 @@ export default function Header() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image source={images.logo} style={styles.logo} />
-        <Text style={styles.appName}>Health Tracker</Text>
+        <Text style={styles.appName}>Health Tracker1</Text>
       </View>
       <View style={styles.rightIcons}>
         <View style={styles.bellWrapper}>

@@ -5,7 +5,7 @@ import { icons } from '@/constants/icon';
 export default function ActivitySummary() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Activity Summary</Text>
+      <Text style={styles.title}>Activity Summary hello</Text>
 
       <View style={styles.row}>
         {/* Steps */}

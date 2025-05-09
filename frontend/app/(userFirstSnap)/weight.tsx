@@ -65,7 +65,7 @@ const WeightPickerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What is your weight?</Text>
+      <Text style={styles.title}>What is your weight1?</Text>
       <Text style={styles.subtitle}>This help us create your persionalized plan</Text>
 
       <View style={styles.wheelWrapper}>

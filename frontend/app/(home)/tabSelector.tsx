@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 
-const tabData = ['Daily Summary', 'Workouts', 'Energy Efficiency', 'Plan work'];
+const tabData = ['Daily Summary1', 'Workouts', 'Energy Efficiency', 'Plan work'];
 
 export default function TabSelector() {
   const [activeIndex, setActiveIndex] = useState(0);

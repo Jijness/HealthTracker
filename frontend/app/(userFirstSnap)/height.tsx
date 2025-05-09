@@ -38,7 +38,7 @@ const HeightPickerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What is your height?</Text>
+      <Text style={styles.title}>What is your height1?</Text>
       <Text style={styles.subtitle}>This help us create your persionalized plan</Text>
 
       <View style={styles.wheelWrapper}>

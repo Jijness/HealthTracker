@@ -56,7 +56,7 @@ export default function RegisterScreen() {
       </TouchableOpacity>
 
       <Text style={styles.switchText}>
-        Đã có tài khoản?{' '}
+        Đã có tài khoản1?{' '}
         <Text style={styles.linkText} onPress={() => router.push('./login')}>
           Đăng nhập
         </Text>
@@ -79,7 +79,7 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-
+  // ... giữ nguyên như cũ
   container: {
     flex: 1,
     backgroundColor: '#F3F4F6',

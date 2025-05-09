@@ -1,19 +1,18 @@
-import React, { useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions } from 'react-native';
-import { useRouter } from 'expo-router';
 
-const { height: windowHeight } = Dimensions.get('window');
+import React, { useRef, useState } from 'react';
+import { View, Text,TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions } from 'react-native';
+import { Link } from 'expo-router';
+
+const { height } = Dimensions.get('window');
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
 const HeightPickerScreen = () => {
   const scrollY = useRef(new Animated.Value(0)).current;
-  const [selectedHeight, setSelectedHeight] = useState(150);
-  const router = useRouter();
+  const [selectedHeight, setSelectedHeight] = useState(40);
 
-  const heightData = Array.from({ length: 130 }, (_, i) => i + 100); // 100 - 199 cm
-  const listRef = useRef<FlatList<number>>(null);
-
+  const height = Array.from({ length: 100 }, (_, i) => i + 30);
+  const listRef = useRef<FlatList<number>>(null); 
 
   const onScroll = Animated.event(
     [{ nativeEvent: { contentOffset: { y: scrollY } } }],
@@ -23,22 +22,15 @@ const HeightPickerScreen = () => {
   const onMomentumScrollEnd = (event: any) => {
     const offsetY = event.nativeEvent.contentOffset.y;
     const index = Math.round(offsetY / ITEM_HEIGHT);
-    setSelectedHeight(heightData[index]);
+    setSelectedHeight(height[index]);
     if (listRef.current) {
       listRef.current.scrollToOffset({ offset: index * ITEM_HEIGHT, animated: true });
     }
   };
 
-  const handleNext = () => {
-    router.push({
-      pathname: '/(userFirstSnap)/weight',
-      params: { height: selectedHeight.toString() },
-    });
-  };
-
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What is your height1?</Text>
+      <Text style={styles.title}>What is your weight?</Text>
       <Text style={styles.subtitle}>This help us create your persionalized plan</Text>
 
       <View style={styles.wheelWrapper}>
@@ -46,7 +38,7 @@ const HeightPickerScreen = () => {
 
         <Animated.FlatList
           ref={listRef}
-          data={heightData}
+          data={height}
           keyExtractor={(item) => item.toString()}
           bounces={false}
           showsVerticalScrollIndicator={false}
@@ -63,12 +55,20 @@ const HeightPickerScreen = () => {
               index * ITEM_HEIGHT,
               (index + 2) * ITEM_HEIGHT,
             ];
-            const opacity = scrollY.interpolate({ inputRange, outputRange: [0.4, 1, 0.4], extrapolate: 'clamp' });
-            const scale = scrollY.interpolate({ inputRange, outputRange: [0.8, 1.2, 0.8], extrapolate: 'clamp' });
+            const opacity = scrollY.interpolate({
+              inputRange,
+              outputRange: [0.4, 1, 0.4],
+              extrapolate: 'clamp',
+            });
+            const scale = scrollY.interpolate({
+              inputRange,
+              outputRange: [0.8, 1.2, 0.8],
+              extrapolate: 'clamp',
+            });
 
             return (
               <Animated.View style={[styles.itemContainer, { opacity, transform: [{ scale }] }]}>
-                <Text style={styles.itemText}>{item} cm</Text>
+                <Text style={styles.itemText}>{item} Kg</Text>
               </Animated.View>
             );
           }}
@@ -76,9 +76,11 @@ const HeightPickerScreen = () => {
 
         <View style={styles.highlightLine} />
       </View>
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
-      </TouchableOpacity>
+      <Link href="./weight" asChild>
+        <TouchableOpacity style={styles.button}>
+              <Text style={styles.buttonText}>Next</Text> 
+         </TouchableOpacity>
+       </Link>
     </View>
   );
 };

@@ -22,13 +22,13 @@ export default function LoginScreen() {
     setLoading(true);
     try {
       const { token, isFirstLogin } = await loginUser({ email: email.trim(), password: password.trim() });
-      // Giả sử backend trả về { token: '...', user: {...} }
+      // Giả sử backend trả về { token: '...', user1: {...} }
       await AsyncStorage.setItem('token', token);
 
       if(isFirstLogin) {
         router.replace('/(userInforBody)/gender');
       }else{
-        router.replace('/(home)/home');
+        router.replace('/(tabs)/home');
       }
     } catch (err: any) {
       Alert.alert(

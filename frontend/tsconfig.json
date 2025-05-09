@@ -14,5 +14,9 @@
     ".expo/types/**/*.ts",
     "expo-env.d.ts",
     "nativewind-env.d.ts"
+<<<<<<< HEAD
 , "services/api.ts"  ]
+=======
+  ]
+>>>>>>> 2c7b14e54ceb0f147796277cad1a037775fd4c9b
 }

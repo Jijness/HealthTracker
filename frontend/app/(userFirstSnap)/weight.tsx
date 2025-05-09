@@ -55,7 +55,7 @@ const WeightPickerScreen = () => {
       });
 
       if (res.status === 201) {
-        router.replace('/(home)/home');
+        router.replace('/(tabs)/home');
       }
     } catch (error: any) {
       console.log('HealthSnap API error:', error.response?.status, error.response?.data);

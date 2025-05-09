@@ -28,7 +28,7 @@ export default function LoginScreen() {
       if(isFirstLogin) {
         router.replace('/(userInforBody)/gender');
       }else{
-        router.replace('/(home)/home');
+        router.replace('/(tabs)/home');
       }
     } catch (err: any) {
       Alert.alert(

@@ -22,9 +22,11 @@ const RootLayout = () => {
                     headerShown: false,
                   }}
                 >
-                  <Stack.Screen name="(tabs)" />
                   <Stack.Screen name="(authentic)" />
                   <Stack.Screen name="(information)" />
+                  <Stack.Screen name="(userFirstSnap)" />
+                  <Stack.Screen name="(usetInforBody)" /> 
+                  <Stack.Screen name="(tabs)" />  
                   <Stack.Screen name="index" />
                 </Stack>
             </ThemeProvider>

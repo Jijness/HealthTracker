@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import { SafeAreaView, ScrollView, StyleSheet, View ,Text} from 'react-native';
-import Header from './header';
-import HealthCard from './healthCard'
-import ActivitySummary from './activitySummary';
-import TabS from './tabSelector';
+import Header from '../(home)/header';
+import HealthCard from '../(home)/healthCard'
+import ActivitySummary from '../(home)/activitySummary';
+import TabS from '../(home)/tabSelector';
 export default function Home() {
   // const [username, setUsername]= useState(null);
   // useEffect(()=>{
@@ -23,9 +23,6 @@ export default function Home() {
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <Header/>
-         <View>
-         <Text style={styles.hello}>Hello</Text>
-         </View>
         <TabS/>
         <HealthCard />
         <ActivitySummary />

@@ -1,27 +1,35 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { icons } from '@/constants/icon';
 import { ProgressBar } from 'react-native-paper';
+import { useRouter } from 'expo-router';
 
 export default function HealthCard() {
+  const router = useRouter();
+  const handlePress = () => {
+    router.push('/healthSnapForm');
+  }
+
   return (
-    <View style={styles.card}>
-      <View style={styles.topRow}>
-        <View style={styles.iconCircle}>
-          <Image source={icons.heart} style={styles.icon} />
+    <Pressable onPress={handlePress} style={styles.card}>
+      <View style={styles.card}>
+        <View style={styles.topRow}>
+          <View style={styles.iconCircle}>
+            <Image source={icons.heart} style={styles.icon} />
+          </View>
+          <Ionicons name="qr-code" size={24} color="white" />
         </View>
-        <Ionicons name="qr-code" size={24} color="white" />
-      </View>
-      <Text style={styles.status}>You are healthy</Text>
-      <View style={styles.progressContainer}>
-        <Text style={styles.percentage}>70%</Text>
-        <View style={styles.progressSection}>
-          <ProgressBar progress={0.5} color="#FDD835" style={styles.progressBar} />
-          <Text style={styles.subtext}>Keep it up! Healthy lifestyle on track</Text>
+        <Text style={styles.status}>You are healthy</Text>
+        <View style={styles.progressContainer}>
+          <Text style={styles.percentage}>70%</Text>
+          <View style={styles.progressSection}>
+            <ProgressBar progress={0.5} color="#FDD835" style={styles.progressBar} />
+            <Text style={styles.subtext}>Keep it up! Healthy lifestyle on track</Text>
+          </View>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }
 

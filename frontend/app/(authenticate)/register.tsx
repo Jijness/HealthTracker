@@ -18,16 +18,16 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     if (!username || !email || !password) {
-      return Alert.alert('Vui lòng nhập đầy đủ thông tin');
+      return Alert.alert('Please enter your information!');
     }
     setLoading(true);
     try {
       await registerUser({ username, email, password });
-      Alert.alert('Đăng ký thành công!', undefined, [
+      Alert.alert('Register successfully!', undefined, [
         { text: 'OK', onPress: () => router.push('./login') }
       ]);
     } catch (err: any) {
-      Alert.alert('Đăng ký thất bại', err.response?.data?.message || err.message);
+      Alert.alert('Failed to register', err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -51,14 +51,14 @@ export default function RegisterScreen() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'Đang xử lý...' : 'Đăng ký'}
+          {loading ? 'Please wait...' : 'Register'}
         </Text>
       </TouchableOpacity>
 
       <Text style={styles.switchText}>
-        Đã có tài khoản1?{' '}
+        Already have an account?{' '}
         <Text style={styles.linkText} onPress={() => router.push('./login')}>
-          Đăng nhập
+          Login
         </Text>
       </Text>
 

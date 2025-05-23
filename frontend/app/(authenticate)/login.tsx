@@ -17,7 +17,7 @@ export default function LoginScreen() {
 
   const handleLogin = async () => {
     if (!email || !password) {
-      return Alert.alert('Vui lòng nhập email và mật khẩu.');
+      return Alert.alert('Please enter your email and password.');
     }
     setLoading(true);
     try {
@@ -25,14 +25,14 @@ export default function LoginScreen() {
       // Giả sử backend trả về { token: '...', user1: {...} }
       await AsyncStorage.setItem('token', token);
 
-      if(isFirstLogin) {
+      if (isFirstLogin) {
         router.replace('/(userInforBody)/gender');
-      }else{
+      } else {
         router.replace('/(tabs)/home');
       }
     } catch (err: any) {
       Alert.alert(
-        'Đăng nhập thất bại',
+        'Failed to login',
         err.response?.data?.message || err.message
       );
     } finally {
@@ -57,14 +57,14 @@ export default function LoginScreen() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+          {loading ? 'Please wait' : 'Login'}
         </Text>
       </TouchableOpacity>
 
       <Text style={styles.switchText}>
-        Chưa có tài khoản?{' '}
+        Do not have an account?{' '}
         <Text style={styles.linkText} onPress={() => router.push('./register')}>
-          Đăng ký
+          Register now
         </Text>
       </Text>
 

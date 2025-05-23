@@ -13,7 +13,7 @@ export default function ActivitySummary() {
           <View style={[styles.iconCircle, { backgroundColor: '#4CAF50' }]}>
             <Image source={icons.foot} style={styles.icon} />
           </View>
-          <Text style={styles.label}>Steps token</Text>
+          <Text style={styles.label}>Steps counter</Text>
           <Text style={styles.value}>
             4090 <Text style={styles.unit}>Steps</Text>
           </Text>
@@ -24,7 +24,7 @@ export default function ActivitySummary() {
           <View style={[styles.iconCircle, { backgroundColor: '#FF7043' }]}>
             <Image source={icons.fire} style={styles.icon} />
           </View>
-          <Text style={styles.label}>Calories</Text>
+          <Text style={styles.label}>Calories burn from walk</Text>
           <Text style={styles.value}>
             384 <Text style={styles.unit}>KCal</Text>
           </Text>

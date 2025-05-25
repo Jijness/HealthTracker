@@ -8,6 +8,17 @@ const getAllDailyStatByUser = async (userId, begin, end) => {
         .find(filter)
         .sort({ date: -1 });
 };
+const getTodayDailyStatByUser = async (userId) => {
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+    return await DailyStat.findOne({
+        user: new mongoose.Types.ObjectId(userId),
+        date: { $gte: startOfToday, $lte: endOfToday },
+    });
+};
 
 const upsertTodayStat = async (userId) => {
     const startOfToday = new Date();
@@ -37,6 +48,7 @@ const updateStepStat = async (statId, { steps }) => {
 
 export default {
     getAllDailyStatByUser,
+    getTodayDailyStatByUser,
     upsertTodayStat,
     updateSleepStat,
     updateStepStat

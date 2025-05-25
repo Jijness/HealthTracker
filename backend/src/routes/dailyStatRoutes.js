@@ -10,8 +10,7 @@ dailyStatRoutes.use(checkAuth);
 
 // dự cái này là cho việc lấy toàn bộ bản ghi hoặc trong vòng 7 ngày hoặc xa hơn để vẽ biểu đồ
 dailyStatRoutes.get('/', checkAuth, dailyStatController.getDailyStats);
-
-// dailyStatRoutes.post ??? khong biet co nen cho vao ko vi ban ghi la cho moi ngay roi, hay la chi can patch thui
+dailyStatRoutes.get('/today', checkAuth, dailyStatController.getTodayStat);
 
 // riêng cho nhập giờ ngủ, giờ thức dậy
 dailyStatRoutes.patch('/sleep',

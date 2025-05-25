@@ -17,6 +17,20 @@ const getDailyStats = async (req, res, next) => {
         return next(error);
     }
 };
+const getTodayStat = async (req, res, next) => {
+    const userId = req.user.userId;
+
+    try {
+        const stats = await dailyStatService.getTodayDailyStatByUser(userId);
+        if (!stats) {
+            return res.status(200).json({});
+        }
+        res.status(200).json({ stats });
+    } catch (err) {
+        const error = new HttpError('Fetching dailyStats failed, try again later.', 500);
+        return next(error);
+    }
+};
 
 const updateSleepStat = async (req, res, next) => {
     const errors = validationResult(req);
@@ -85,6 +99,7 @@ const updateStepStat = async (req, res, next) => {
 
 export default {
     getDailyStats,
+    getTodayStat,
     updateSleepStat,
     updateStepStat
 };

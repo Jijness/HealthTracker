@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image } from 'react-native';
 import { icons } from '@/constants/icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -12,9 +12,12 @@ type ActivitySummaryProps = {
 };
 
 export default function ActivitySummary({ initialSteps, initialSleepTime, initialWakeTime }: ActivitySummaryProps) {
-  const [steps, setSteps] = useState(initialSteps || 0);
+  const [currentSteps, setCurrentSteps] = useState(initialSteps || 0);
   const [sleepHours, setSleepHours] = useState<number | null>(null);
   const [lastSentSteps, setLastSentSteps] = useState(initialSteps || 0);
+  const [lastSendTime, setLastSendTime] = useState(Date.now());
+  const isFirstRender = useRef(true);
+  const sendInterval = useRef(30000);
 
   useEffect(() => {
     if (initialSleepTime && initialWakeTime) {
@@ -35,11 +38,11 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
   }, [initialSleepTime, initialWakeTime]);
 
   useEffect(() => {
-    setSteps(initialSteps || 0);
-    const intervalId = setInterval(() => {
-      setSteps(prevSteps => prevSteps + Math.floor(Math.random() * 3)); // Mock tăng bước chân
-    }, 1000);
-    return () => clearInterval(intervalId);
+    if (isFirstRender.current) {
+      setCurrentSteps(initialSteps || 0);
+      setLastSentSteps(initialSteps || 0); // Cập nhật lastSentSteps ban đầu
+      isFirstRender.current = false;
+    }
   }, [initialSteps]);
 
   // Track step bang sensor
@@ -49,7 +52,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
       const isAvailable = await Pedometer.isAvailableAsync();
       if (isAvailable) {
         subscription = Pedometer.watchStepCount(result => {
-          setSteps(result.steps);
+          setCurrentSteps(prevSteps => Math.max(prevSteps, initialSteps || 0) + result.steps);
         });
       } else {
         console.log("Pedometer is not available on this device.");
@@ -61,7 +64,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
         subscription.remove();
       }
     }
-  }, []);
+  }, [initialSteps]);
 
   // Gui step cho backend sau khi gia tri thay doi 1 khoang dang ke
   useEffect(() => {
@@ -72,21 +75,27 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
           console.error('Authentication token not found.');
           return;
         }
-        if (Math.abs(steps - lastSentSteps) >= 50) {
+        const currentTime = Date.now();
+        const timeElapsed = currentTime - lastSendTime;
+        const stepsDifference = Math.abs(currentSteps - lastSentSteps);
+
+        if (stepsDifference >= 50 || timeElapsed >= sendInterval.current) {
           const response = await fetch(`${API_BASE_URL}/dailyStat/step`, {
             method: 'PATCH',
             headers: {
               'Content-Type': 'application/json',
               Authorization: `Bearer ${token}`,
             },
-            body: JSON.stringify({ steps }),
+            body: JSON.stringify({ steps: currentSteps }),
           });
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Failed to update steps:', errorData);
+          if (response.ok) {
+            console.log('Steps updated on backend:', currentSteps);
+            setLastSentSteps(currentSteps);
+            setLastSendTime(currentTime);
+            // Điều chỉnh thời gian gửi dựa trên tốc độ thay đổi bước chân
+            sendInterval.current = stepsDifference < 100 ? 30000 : 15000; // Gửi nhanh hơn nếu đi nhanh
           } else {
-            console.log('Steps updated on backend:', steps);
-            setLastSentSteps(steps);
+            console.error('Failed to update steps:', await response.json());
           }
         }
       } catch (error) {
@@ -94,8 +103,9 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
       }
     };
 
-    updateStepsOnBackend();
-  }, [steps, lastSentSteps]);
+    const intervalId = setInterval(updateStepsOnBackend, 5000); // Kiểm tra mỗi 5 giây
+    return () => clearInterval(intervalId);
+  }, [currentSteps, lastSentSteps]);
 
   return (
     <View style={styles.container}>
@@ -109,7 +119,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
           </View>
           <Text style={styles.label}>Steps counter</Text>
           <Text style={styles.value}>
-            {steps} <Text style={styles.unit}>Steps</Text>
+            {currentSteps} <Text style={styles.unit}>Steps</Text>
           </Text>
         </View>
 

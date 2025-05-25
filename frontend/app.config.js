@@ -18,7 +18,10 @@ export default {
         foregroundImage: "./assets/images/logo.png",
         backgroundColor: "#ffffff"
       },
-      package: "com.jijness.healthtracker"
+      package: "com.jijness.healthtracker",
+      permissions: [
+        "ACTIVITY_RECOGNITION"
+      ]
     },
     web: {
       bundler: "metro",
@@ -42,6 +45,9 @@ export default {
       typedRoutes: true
     },
     extra: {
+      eas: {
+        projectId: '96721e32-b923-4bfb-9ef7-59c297281b58',
+      },
       apiUrl: process.env.API_BASE_URL
     }
   }

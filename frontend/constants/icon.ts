@@ -7,8 +7,8 @@ import foot from "@/assets/icons/footprint.png"
 import heart from "@/assets/icons/heart-rate.png"
 import fire from "@/assets/icons/danger.png"
 import bell from "@/assets/icons/bell.png"
-import sleep from "@/assets/icons/sleep.png"
-export const icons = {
+import sleep from "@/assets/icons/sleeping.png"
+export const icons ={
     google,
     male,
     female,

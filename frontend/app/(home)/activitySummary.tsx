@@ -147,7 +147,19 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
           </Text>
         </View>
       </View>
+      <View style={[styles.box, styles.hydrateBox]}>
+        <View style={[styles.iconCircle, { backgroundColor: '#42A5F5' }]}>
+          <Image source={icons.water} style={styles.icon} />
+        </View>
+        <View style={styles.hydrateContent}>
+          <Text style={styles.label}>Hydrate</Text>
+          <Text style={styles.value}>
+            1700 <Text style={styles.unit}>ML</Text>
+          </Text>
+        </View>
+      </View>
     </View>
+
   );
 }
 
@@ -173,6 +185,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   sleepBox: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  hydrateBox: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',
@@ -205,6 +222,9 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   sleepContent: {
+    marginLeft: 12,
+  },
+  hydrateContent: {
     marginLeft: 12,
   },
 });

@@ -10,16 +10,9 @@ export default function TabLayout(){
       <Tabs.Screen name="home"
        options={{
         tabBarIcon:({color,size})=><Ionicons name="home" size={size} color={color} />,
-        tabBarLabel:'Home1'
+        tabBarLabel:'Home'
        }}
        />
-
-      <Tabs.Screen name="about" 
-         options={{
-          tabBarIcon:({color,size})=><Ionicons name="information-circle" size={size} color={color} />,
-          tabBarLabel:'About'
-         }}
-      />
       <Tabs.Screen name="analysis" 
          options={{
           tabBarIcon:({color,size})=><Ionicons name="analytics-outline" size={size} color={color} />,
@@ -30,6 +23,13 @@ export default function TabLayout(){
          options={{
           tabBarIcon:({color,size})=><Ionicons name="person" size={size} color={color} />,
           tabBarLabel:'Profile'
+         }}
+      />
+      
+      <Tabs.Screen name="setting" 
+         options={{
+          tabBarIcon:({color,size})=><Ionicons name="settings" size={size} color={color} />,
+          tabBarLabel:'Setting'
          }}
       />
     </Tabs>

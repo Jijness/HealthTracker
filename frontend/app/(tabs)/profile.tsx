@@ -1,11 +1,9 @@
-import { View, Text } from 'react-native'
+import { View, Text, SafeAreaView } from 'react-native'
 import React from 'react'
-
+import Myprofile from '../component/Myprofile'
 const profile = () => {
   return (
-    <View>
-      <Text>profile1</Text>
-    </View>
+      <Myprofile/>
   )
 }
 

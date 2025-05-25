@@ -43,6 +43,17 @@ export default function ActivitySummary() {
           </Text>
         </View>
       </View>
+      <View style={[styles.box, styles.hydrateBox]}>
+        <View style={[styles.iconCircle, { backgroundColor: 'white' }]}>
+          <Image source={icons.sleep} style={styles.icon} />
+        </View>
+        <View style={styles.hydrateContent}>
+          <Text style={styles.label}>BebTime</Text>
+          <Text style={styles.value}>
+            8 <Text style={styles.unit}>Hours</Text>
+          </Text>
+        </View>
+      </View>
     </View>
   );
 }
@@ -84,7 +95,6 @@ const styles = StyleSheet.create({
   icon: {
     width: 20,
     height: 20,
-    tintColor: 'black',
   },
   label: {
     fontSize: 14,

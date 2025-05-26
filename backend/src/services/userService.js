@@ -9,6 +9,13 @@ const getAllUsers = async () => {
     // return await User.find(); // co tra ve password
     return await User.find({}, '-password'); // ko tra ve password
 }
+const getUserInfor = async (userId) => {
+    const user = await User.findById(userId, '-password');
+    if (!user) {
+        throw new HttpError('Could not find user', 404);
+    }
+    return user;
+}
 
 const registerUser = async ({ username, email, password }) => {
     const existingUser = await User.findOne({ email });
@@ -62,9 +69,10 @@ const updateInfor = async (userId, data) => {
         id: updated.id,
         email: updated.email,
         username: updated.username,
+        full_name: updated.full_name,
         gender: updated.gender,
         birth_year: updated.birth_year,
-        activityLevel: updated.activity_level,
+        activity_level: updated.activity_level,
         role: updated.role
     }
 };
@@ -78,6 +86,7 @@ const deleteUser = async (userId) => {
 
 export default {
     getAllUsers,
+    getUserInfor,
     registerUser,
     loginUser,
     updateInfor,

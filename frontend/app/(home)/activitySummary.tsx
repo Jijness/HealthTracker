@@ -137,7 +137,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
 
       {/* Sleep */}
       <View style={[styles.box, styles.sleepBox]}>
-        <View style={[styles.iconCircle, { backgroundColor: '#42A5F5' }]}>
+        <View style={[styles.iconCircle, { backgroundColor: 'white' }]}>
           <Image source={icons.sleep} style={styles.icon} />
         </View>
         <View style={styles.sleepContent}>
@@ -204,8 +204,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     width: 20,
-    height: 20,
-    tintColor: 'black',
+    height: 20
   },
   label: {
     fontSize: 14,

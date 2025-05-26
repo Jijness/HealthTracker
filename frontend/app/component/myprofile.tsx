@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,40 +8,106 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 import { icons } from '@/constants/icon';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../../apiConfig';
 
 export default function MyProfile() {
+  const router = useRouter();
+  const [userInfo, setUserInfo] = useState({
+    full_name: '...',
+    username: '--',
+    gender: '--',
+    birth_year: '--',
+    activity_level: '--',
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (!token) {
+          router.replace('/(authenticate)/login'); // Redirect nếu không có token
+          return;
+        }
+
+        const response = await fetch(`${API_BASE_URL}/users/infor`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        // console.log(response);
+
+        if (!response.ok) {
+          console.error('Failed to fetch user profile:', response.status);
+          return;
+        }
+
+        const data = await response.json();
+        setUserInfo(data.user);
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+        // Xử lý lỗi
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+      console.log('Token removed!');
+      router.replace('/(authenticate)/login');
+    } catch (err) {
+      console.error('Error removing token:', err);
+    }
+  };
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Text>Loading...</Text>
+        </ScrollView>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Trang của bạn</Text>
+        <Text style={styles.title}>Your profile</Text>
 
         <View style={styles.avatarContainer}>
           <Image source={icons.user} style={styles.avatar} />
           <Link href="/component/Editprofile" asChild>
             <TouchableOpacity style={styles.editButton}>
-              <Text style={styles.editText}>Sửa</Text>
+              <Text style={styles.editText}>Edit</Text>
             </TouchableOpacity>
           </Link>
-          <Text style={styles.name}>Hoàng Trọng</Text>
+          <Text style={styles.name}>{userInfo.username || userInfo.full_name}</Text>
         </View>
         <View style={styles.infoBox}>
           <View style={styles.infoRow}>
             <Text style={styles.label}>Gender</Text>
-            <Text style={styles.value}>Male</Text>
+            <Text style={styles.value}>{userInfo.gender}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Height</Text>
-            <Text style={styles.value}>170cm</Text>
+            <Text style={styles.label}>Birth year</Text>
+            <Text style={styles.value}>{userInfo.birth_year}</Text>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.label}>Weight</Text>
-            <Text style={styles.value}>77.0 Kg</Text>
+            <Text style={styles.label}>Activity level</Text>
+            <Text style={styles.value}>{userInfo.activity_level}</Text>
           </View>
         </View>
         <Link href="/(authenticate)/login" asChild>
-          <TouchableOpacity style={styles.Button}>
+          <TouchableOpacity style={styles.Button} onPress={handleLogout}>
             <Text style={styles.Text}>Log out</Text>
           </TouchableOpacity>
         </Link>

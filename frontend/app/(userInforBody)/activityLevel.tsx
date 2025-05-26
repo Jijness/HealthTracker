@@ -30,6 +30,7 @@ export default function ActivityLevelScreen() {
         try {
             const token = await AsyncStorage.getItem('token');
             const res = await axios.patch(`${API_BASE_URL}/users/updateInfor`, {
+                full_name: 'user',
                 gender,
                 birth_year: parseInt(birth_year, 10),
                 activity_level: selected,

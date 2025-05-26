@@ -1,21 +1,45 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, StatusBar } from 'react-native';
-import {images} from "@/constants/images"
-import { Link } from 'expo-router';
+import { images } from "@/constants/images"
+import { Link, useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+
 export default function App() {
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        if (token) {
+          router.replace('./(tab)/home');
+        } else {
+          router.replace('./(authenticate)/login');
+        }
+      } catch (err) {
+        console.error("Error checking token: ", err);
+        router.replace('./(authenticate)/login');
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  })
+
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topSection}>
         <Image source={images.logo} style={styles.logo} />
         <Text style={styles.title}>Healthy tracker</Text>
         <Text style={styles.subtitle}>Health is your life</Text>
       </View>
       <View style={styles.bottomSection}>
-      <Link href="./(authenticate)/login" asChild>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Start</Text>
-      </TouchableOpacity>
-      </Link>
+        <Link href="./(authenticate)/login" asChild>
+          <TouchableOpacity style={styles.button}>
+            <Text style={styles.buttonText}>Start</Text>
+          </TouchableOpacity>
+        </Link>
       </View>
     </View>
   );
@@ -27,7 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FDBD10',
     paddingHorizontal: 20,
     justifyContent: 'space-between',
-    paddingVertical: 60, 
+    paddingVertical: 60,
   },
   topSection: {
     alignItems: 'center',

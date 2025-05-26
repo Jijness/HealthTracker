@@ -10,6 +10,19 @@ const getUsers = async (req, res, next) => {
         next((err));
     }
 }
+const getUser = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Invalid inputs,', 422));
+    }
+    try {
+        const userId = req.user.userId;
+        const user = await userService.getUserInfor(userId);
+        res.status(200).json({ user });
+    } catch (err) {
+        next((err));
+    }
+}
 
 const register = async (req, res, next) => {
     const errors = validationResult(req);
@@ -53,10 +66,11 @@ const updateInfor = async (req, res, next) => {
     if (!errors.isEmpty()) {
         return next(new HttpError('Invalid inputs,', 422));
     }
-    const { gender, birth_year, activity_level } = req.body;
+    const { full_name, gender, birth_year, activity_level } = req.body;
     const userId = req.user.userId; // gan tu checkAuth
     try {
         const updated = await userService.updateInfor(userId, {
+            full_name,
             gender,
             birth_year: parseInt(birth_year),
             activity_level
@@ -82,6 +96,7 @@ const deleteUser = async (req, res, next) => {
 
 export default {
     getUsers,
+    getUser,
     register,
     login,
     updateInfor,

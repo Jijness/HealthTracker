@@ -206,9 +206,6 @@ const HealthSnapForm = () => {
                 </View>
 
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.cancelButton} onPress={handleCancel}>
-                        <Text style={styles.buttonText}>Back</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity
                         style={[styles.saveButton, !isValid && styles.disabledButton]}
                         onPress={handleSubmit(handleSave)}
@@ -224,24 +221,31 @@ const HealthSnapForm = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flexGrow: 1,
-        padding: 20,
-        backgroundColor: '#F5F5DC', // Màu vàng nhạt/kem
+        flex: 1,
+        paddingTop: 60,
+        paddingBottom: 100,
+        paddingHorizontal: 20,
+        backgroundColor: '#FFC730',
+        alignItems: 'center',
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
+        fontSize: 22,
+        fontWeight: '500',
         marginBottom: 20,
-        color: '#2E8B57', // Màu xanh lá cây đậm
+        color: '#3d3d3d',
         textAlign: 'center',
+        width: '85%',
     },
     inputGroup: {
-        marginBottom: 15,
+        marginBottom: 20,
+        width: '85%',
     },
     label: {
         fontSize: 16,
-        marginBottom: 5,
-        color: '#333', // Màu đen hoặc xám đậm
+        fontWeight: '500',
+        marginBottom: 6,
+        color: '#3d3d3d',
+        width: '85%',
     },
     required: {
         color: 'red',

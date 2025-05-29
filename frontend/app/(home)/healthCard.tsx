@@ -8,7 +8,7 @@ import { useRouter } from 'expo-router';
 export default function HealthCard() {
   const router = useRouter();
   const handlePress = () => {
-    router.push('/healthSnapForm');
+    router.push('../component/healthSnapForm');
   }
 
   return (

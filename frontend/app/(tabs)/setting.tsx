@@ -7,18 +7,18 @@ import { Ionicons } from '@expo/vector-icons'
 export default function About() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Cài đặt</Text>
+      <Text style={styles.title}>Setting</Text>
 
         <TouchableOpacity style={styles.button} onPress={() => router.push('/component/EditUser')}>
-          <Text style={styles.buttonText}>Thay đổi mật khẩu</Text>
+          <Text style={styles.buttonText}>Change your password</Text>
           <Ionicons name="chevron-forward" size={20} color="white" />
         </TouchableOpacity>
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Thay đổi ngôn ngữ</Text>
+        <Text style={styles.buttonText}>Language</Text>
         <Ionicons name="chevron-forward" size={20} color="white" />
       </TouchableOpacity>
       <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Thay đổi nền ứng dụng</Text>
+        <Text style={styles.buttonText}>Theme</Text>
         <Ionicons name="chevron-forward" size={20} color="white" />
       </TouchableOpacity>
     </View>

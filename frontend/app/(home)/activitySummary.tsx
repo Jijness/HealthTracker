@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
 import { icons } from '@/constants/icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
 import { Pedometer } from 'expo-sensors';
+import { useRouter } from 'expo-router';
 
 type ActivitySummaryProps = {
   initialSteps: number;
@@ -12,6 +13,8 @@ type ActivitySummaryProps = {
 };
 
 export default function ActivitySummary({ initialSteps, initialSleepTime, initialWakeTime }: ActivitySummaryProps) {
+  const router = useRouter();
+
   const [currentSteps, setCurrentSteps] = useState(initialSteps || 0);
   const [sleepHours, setSleepHours] = useState<number | null>(null);
   const [lastSentSteps, setLastSentSteps] = useState(initialSteps || 0);
@@ -107,6 +110,10 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
     return () => clearInterval(intervalId);
   }, [currentSteps, lastSentSteps]);
 
+  const handleSleepPress = () => {
+    router.push('/component/SleepInput');
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Activity Summary</Text>
@@ -136,7 +143,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
       </View>
 
       {/* Sleep */}
-      <View style={[styles.box, styles.sleepBox]}>
+      <Pressable onPress={handleSleepPress} style={[styles.box, styles.sleepBox]}>
         <View style={[styles.iconCircle, { backgroundColor: 'white' }]}>
           <Image source={icons.sleep} style={styles.icon} />
         </View>
@@ -146,7 +153,10 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
             {sleepHours !== null ? sleepHours.toFixed(1) : '--'} <Text style={styles.unit}>Hours</Text>
           </Text>
         </View>
-      </View>
+      </Pressable>
+
+
+
       <View style={[styles.box, styles.hydrateBox]}>
         <View style={[styles.iconCircle, { backgroundColor: '#42A5F5' }]}>
           <Image source={icons.water} style={styles.icon} />
@@ -222,8 +232,10 @@ const styles = StyleSheet.create({
   },
   sleepContent: {
     marginLeft: 12,
+    flex: 1,
   },
   hydrateContent: {
     marginLeft: 12,
+    flex: 1
   },
 });

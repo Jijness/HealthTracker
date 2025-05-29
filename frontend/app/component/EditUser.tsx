@@ -19,14 +19,14 @@ export default function ChangePassword() {
   const handleChangePassword = () => {
     setError('');
     if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Vui lòng điền đầy đủ thông tin');
+      setError('Please fill in all information');
       return;
     }
     if (newPassword !== confirmPassword) {
-      setError('Mật khẩu mới và xác nhận không khớp');
+      setError('New password and confirmation do not match');
       return;
     }
-    Alert.alert('Thành công', 'Mật khẩu đã được thay đổi');
+    Alert.alert('Successful', 'Changed password!');
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -35,45 +35,45 @@ export default function ChangePassword() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Đổi mật khẩu</Text>
+        <Text style={styles.title}>Change password</Text>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Mật khẩu hiện tại</Text>
+          <Text style={styles.label}>Current password</Text>
           <TextInput
             style={styles.input}
             value={currentPassword}
             onChangeText={setCurrentPassword}
             secureTextEntry
-            placeholder="Nhập mật khẩu hiện tại"
+            placeholder="Enter your current password"
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Mật khẩu mới</Text>
+          <Text style={styles.label}>New password</Text>
           <TextInput
             style={styles.input}
             value={newPassword}
             onChangeText={setNewPassword}
             secureTextEntry
-            placeholder="Nhập mật khẩu mới"
+            placeholder="Enter your new password"
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Xác nhận mật khẩu mới</Text>
+          <Text style={styles.label}>Retype password</Text>
           <TextInput
             style={styles.input}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
-            placeholder="Nhập lại mật khẩu mới"
+            placeholder="Retype your new password"
           />
         </View>
 
         <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
-          <Text style={styles.buttonText}>Đổi mật khẩu</Text>
+          <Text style={styles.buttonText}>Save</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

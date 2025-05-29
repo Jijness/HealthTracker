@@ -12,13 +12,6 @@ export default function Layout() {
           headerShown: false,
         }}
       />
-      <Stack.Screen
-        name="healthSnapForm" // Khai báo route cho healthSnapForm
-        options={{
-          title: "New health snapshot", // Tùy chỉnh title header nếu muốn
-          headerShown: false, // Hiển thị header cho trang này (tùy chọn)
-        }}
-      />
     </Stack>
   );
 }

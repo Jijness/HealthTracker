@@ -1,9 +1,62 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
+
+interface Option {
+  label: string;
+  value: string;
+}
+
+interface SimpleOptionSelectorProps {
+  label: string;
+  value: string;
+  onValueChange: (value: string) => void;
+  items: Option[];
+}
+
+const genderList: Option[] = [
+  { label: 'Male', value: 'male' },
+  { label: 'Female', value: 'female' },
+];
+
+const activityList: Option[] = [
+  { label: 'Sedentary', value: 'sedentary' },
+  { label: 'Light', value: 'light' },
+  { label: 'Moderate', value: 'moderate' },
+  { label: 'Active', value: 'active' },
+  { label: 'Very active', value: 'very_active' },
+];
+
+const SimpleOptionSelector: React.FC<SimpleOptionSelectorProps> = ({ label, value, onValueChange, items }) => {
+  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+
+  const handleSelectOption = (itemValue: string) => {
+    onValueChange(itemValue);
+    setIsOptionsVisible(false);
+  };
+
+  return (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>{label}</Text>
+      <TouchableOpacity style={styles.pickerButton} onPress={() => setIsOptionsVisible(!isOptionsVisible)}>
+        <Text>{value ? items.find(item => item.value === value)?.label || `Choose ${label.toLowerCase()}` : `Choose ${label.toLowerCase()}`}</Text>
+      </TouchableOpacity>
+      {isOptionsVisible && (
+        <View style={styles.optionsContainer}>
+          {items.map(item => (
+            <TouchableOpacity key={item.value} style={styles.optionItem} onPress={() => handleSelectOption(item.value)}>
+              <Text>{item.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
+
+// Phần còn lại của component EditProfile giữ nguyên
 
 export default function EditProfile() {
   const router = useRouter();
@@ -73,15 +126,13 @@ export default function EditProfile() {
 
       if (!response.ok) {
         console.error('Failed to update profile:', response.status);
-        // Xử lý lỗi cập nhật
         return;
       }
 
-      console.log('Thông tin đã được cập nhật thành công!');
-      router.back(); // Quay lại trang MyProfile sau khi lưu
+      console.log('Updated profile!');
+      router.back();
     } catch (error) {
       console.error('Error updating profile:', error);
-      // Xử lý lỗi
     }
   };
 
@@ -89,7 +140,7 @@ export default function EditProfile() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text>Đang tải thông tin...</Text>
+          <Text>Loading...</Text>
         </ScrollView>
       </SafeAreaView>
     );
@@ -98,65 +149,46 @@ export default function EditProfile() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Chỉnh sửa thông tin</Text>
+        <Text style={styles.title}>Edit your profile</Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Họ và tên</Text>
+          <Text style={styles.label}>Full name</Text>
           <TextInput
             style={styles.input}
             value={fullName}
             onChangeText={setFullName}
-            placeholder="Nhập tên của bạn"
+            placeholder="Your name"
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Giới tính</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={gender}
-              onValueChange={(itemValue) => setGender(itemValue)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Chọn giới tính" value="" />
-              <Picker.Item label="Nam" value="male" />
-              <Picker.Item label="Nữ" value="female" />
-            </Picker>
-          </View>
-        </View>
+        <SimpleOptionSelector
+          label="Gender"
+          value={gender}
+          onValueChange={setGender}
+          items={genderList}
+        />
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Năm sinh</Text>
+          <Text style={styles.label}>Birth year</Text>
           <TextInput
             style={styles.input}
             value={birthYear}
             onChangeText={setBirthYear}
-            placeholder="Nhập năm sinh (YYYY)"
+            placeholder="Enter your birth year (YYYY)"
             keyboardType="number-pad"
             maxLength={4}
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={styles.label}>Mức độ hoạt động</Text>
-          <View style={styles.pickerContainer}>
-            <Picker
-              selectedValue={activityLevel}
-              onValueChange={(itemValue) => setActivityLevel(itemValue)}
-              style={styles.picker}
-            >
-              <Picker.Item label="Chọn mức độ" value="" />
-              <Picker.Item label="Ít vận động" value="sedentary" />
-              <Picker.Item label="Nhẹ" value="light" />
-              <Picker.Item label="Vừa phải" value="moderate" />
-              <Picker.Item label="Năng động" value="active" />
-              <Picker.Item label="Rất năng động" value="very_active" />
-            </Picker>
-          </View>
-        </View>
+        <SimpleOptionSelector
+          label="Activity level"
+          value={activityLevel}
+          onValueChange={setActivityLevel}
+          items={activityList}
+        />
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveText}>Lưu</Text>
+          <Text style={styles.saveText}>Save</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -195,16 +227,28 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     fontSize: 16,
   },
-  pickerContainer: {
+  pickerButton: {
     backgroundColor: '#fff',
+    padding: 12,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: '#ccc',
     marginBottom: 5,
   },
-  picker: {
-    height: 45,
-    width: '100%',
+  optionsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    marginTop: 5,
+  },
+  optionItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderColor: '#eee',
+  },
+  optionItemLast: {
+    borderBottomWidth: 0,
   },
   saveButton: {
     backgroundColor: '#d9d9d9',

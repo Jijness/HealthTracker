@@ -79,7 +79,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
         const timeElapsed = currentTime - lastSendTime;
         const stepsDifference = Math.abs(currentSteps - lastSentSteps);
 
-        if (stepsDifference >= 50 || timeElapsed >= sendInterval.current) {
+        if (stepsDifference >= 20 && timeElapsed >= sendInterval.current) {
           const response = await fetch(`${API_BASE_URL}/dailyStat/step`, {
             method: 'PATCH',
             headers: {

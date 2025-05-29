@@ -5,6 +5,8 @@ import { BarChart } from 'react-native-chart-kit';
 const screenWidth = Dimensions.get('window').width;
 
 export default function Calo() {
+  console.log('Calo component rendered');
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>

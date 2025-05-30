@@ -27,16 +27,16 @@ export default function Layout() {
         }}
       />
       <Stack.Screen
-        name="healthSnapForm" // Khai báo route cho healthSnapForm
+        name="healthSnapForm"
         options={{
-          title: "New health snapshot", // Tùy chỉnh title header nếu muốn
-          headerShown: false, // Hiển thị header cho trang này (tùy chọn)
+          title: "New health snapshot",
+          headerShown: false,
         }}
       />
       <Stack.Screen
         name="SleepInput"
         options={{
-          title: "Sleep input",
+          title: "SleepInput",
           headerShown: false,
         }}
       />

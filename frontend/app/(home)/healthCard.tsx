@@ -5,11 +5,51 @@ import { icons } from '@/constants/icon';
 import { ProgressBar } from 'react-native-paper';
 import { useRouter } from 'expo-router';
 
-export default function HealthCard() {
+interface HealthSnap {
+  totalScore?: number;
+  // Add other properties if needed
+}
+
+interface HealthCardProps {
+  healthSnap: HealthSnap;
+}
+
+export default function HealthCard({ healthSnap }: HealthCardProps) {
   const router = useRouter();
   const handlePress = () => {
     router.push('../component/healthSnapForm');
   }
+
+  // Logic để tính toán phần trăm khỏe mạnh từ healthSnap
+  const calculateHealthPercentage = (snap: any) => {
+    const weight = snap.weight;
+    const height = snap.height;
+    if (weight && height) {
+      const heightMeter = height / 100;
+      const bmi = weight / (heightMeter * heightMeter);
+
+      // Định nghĩa ngưỡng BMI khỏe mạnh (ví dụ: 18.5 - 24.9)
+      const healthyBmiMin = 18.5;
+      const healthyBmiMax = 24.9;
+      if (bmi >= healthyBmiMin && bmi <= healthyBmiMax) {
+        return 100; // Coi như 100% khỏe mạnh nếu BMI trong khoảng chuẩn
+      } else if (bmi < healthyBmiMin) {
+        // Tính phần trăm dựa trên khoảng cách đến ngưỡng dưới
+        const percentage = (bmi / healthyBmiMin) * 50; // Giả sử dưới ngưỡng khỏe mạnh thì % tối đa là 50
+        return Math.max(0, percentage);
+      } else {
+        // Tính phần trăm dựa trên khoảng cách đến ngưỡng trên
+        const percentage = (healthyBmiMax / bmi) * 50; // Giả sử trên ngưỡng khỏe mạnh thì % tối đa là 50
+        return Math.max(0, percentage);
+      }
+    }
+    return 0;
+  };
+  const healthPercentage = calculateHealthPercentage(healthSnap);
+  const progress = healthPercentage / 100;
+  const statusText = healthPercentage > 70 ? 'You are healthy' : 'Keep improving';
+  const progressBarColor = healthPercentage > 50 ? '#FDD835' : '#FFAB91';
+  const subText = healthPercentage > 70 ? 'Keep it up! Healthy lifestyle on track' : 'Small steps lead to big changes';
 
   return (
     <Pressable onPress={handlePress} style={styles.card}>
@@ -20,12 +60,12 @@ export default function HealthCard() {
           </View>
           <Ionicons name="qr-code" size={24} color="white" />
         </View>
-        <Text style={styles.status}>You are healthy</Text>
+        <Text style={styles.status}>{statusText}</Text>
         <View style={styles.progressContainer}>
-          <Text style={styles.percentage}>70%</Text>
+          <Text style={styles.percentage}>{healthPercentage.toFixed(0)}%</Text>
           <View style={styles.progressSection}>
-            <ProgressBar progress={0.5} color="#FDD835" style={styles.progressBar} />
-            <Text style={styles.subtext}>Keep it up! Healthy lifestyle on track</Text>
+            <ProgressBar progress={progress} color={progressBarColor} style={styles.progressBar} />
+            <Text style={styles.subtext}>{subText}</Text>
           </View>
         </View>
       </View>

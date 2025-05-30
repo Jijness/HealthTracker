@@ -4,33 +4,53 @@ import { LineChart } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get('window').width;
 
-export default function BMI() {
-  console.log('BMI component rendered');
+interface WeightChartProps {
+  data: any[];
+}
+
+export default function WeightChart({ data }: WeightChartProps) {
+  if (!Array.isArray(data) || data.length === 0) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.card}>
+          <Text style={styles.title}>Weight</Text>
+          <Text>No weight data available.</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const weightData = data.map(item => {
+    const weight = item.weight;
+    return weight;
+  })
+  const labels = data.map(item => new Date(item.Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>BMI</Text>
+        <Text style={styles.title}>Weight</Text>
         <LineChart
           data={{
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: labels,
             datasets: [
               {
-                data: [20, 21, 20.5, 21, 22, 21, 21],
-                color: (opacity = 1) => `rgba(0, 96, 100, ${opacity})`, 
-                strokeWidth: 2, 
+                data: weightData,
+                color: (opacity = 1) => `rgba(0, 96, 100, ${opacity})`,
+                strokeWidth: 2,
               },
             ],
-            legend: ['BMI'],
+            legend: ['Weight'],
           }}
           width={screenWidth - 60}
           height={250}
           yAxisLabel=""
-          yAxisSuffix=""
+          yAxisSuffix=" Kg"
           fromZero={true}
           withDots={true}
-          withShadow={false} 
-          withInnerLines={false} 
-          withOuterLines={true} 
+          withShadow={false}
+          withInnerLines={false}
+          withOuterLines={true}
           chartConfig={{
             backgroundColor: '#e0f7fa',
             backgroundGradientFrom: '#b2ebf2',
@@ -47,7 +67,7 @@ export default function BMI() {
               marginLeft: 0,
             },
             propsForDots: {
-              r: '5', 
+              r: '5',
               strokeWidth: '2',
               stroke: '#fff',
             },
@@ -60,6 +80,7 @@ export default function BMI() {
       </View>
     </View>
   );
+
 }
 
 const styles = StyleSheet.create({
@@ -67,12 +88,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     backgroundColor: '#FFC730',
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   card: {
     backgroundColor: '#fff',
-    borderRadius:16,
-    padding:10,
+    borderRadius: 16,
+    padding: 10,
     width: screenWidth - 40,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },

@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 import DailyStat from "../models/DailyStat.js";
 
-const getAllDailyStatByUser = async (userId, begin, end) => {
-    const filter = { user: new mongoose.Types.ObjectId(userId) };
-    filter.date = { $gte: begin, $lte: end };
-    return await DailyStat
-        .find(filter)
-        .sort({ date: -1 });
+const getAllDailyStatByUser = async (userId) => {
+    const stats = await DailyStat
+        .find({ user: new mongoose.Types.ObjectId(userId) })
+        .sort({ date: -1 })
+        .limit(7);
+    return stats.reverse();
 };
 const getTodayDailyStatByUser = async (userId) => {
     const startOfToday = new Date();

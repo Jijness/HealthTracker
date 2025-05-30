@@ -77,6 +77,18 @@ const updateInfor = async (userId, data) => {
     }
 };
 
+const changePassword = async (userId, currentPassword, newPassword) => {
+    const user = await User.findById(userId);
+    const isCurrentPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+        throw new HttpError('Invalid current password.', 401);
+    }
+    const hashNewPassword = await bcrypt.hash(newPassword, 12);
+    user.password = hashNewPassword;
+    await user.save();
+    return { message: 'Password updated successfully.' };
+}
+
 const deleteUser = async (userId) => {
     // Xoa healthsnap truoc
     await HealthSnap.deleteMany({ user: userId });
@@ -90,5 +102,6 @@ export default {
     registerUser,
     loginUser,
     updateInfor,
+    changePassword,
     deleteUser
 };

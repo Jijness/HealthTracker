@@ -4,26 +4,42 @@ import { BarChart } from 'react-native-chart-kit';
 
 const screenWidth = Dimensions.get('window').width;
 
-export default function Steps() {
-  console.log('Steps component rendered');
+interface SleepChartProps {
+    data: any[];
+}
 
+export default function SleepChart({ data }: SleepChartProps) {
+    const sleepData = data.map(item => {
+        if (!item.sleepTime || !item.wakeTime) {
+            return 0;
+        }
+        const sleep = new Date(item.sleepTime);
+        const wake = new Date(item.wakeTime);
+        let diff = wake.getTime() - sleep.getTime();
+        if (diff < 0) {
+            diff += 24 * 60 * 60 * 1000;
+        }
+        return diff / (60 * 60 * 1000);
+    });
+
+    const labels = data.map(item => new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
     return (
         <View style={styles.container}>
             <View style={styles.card}>
-                <Text style={styles.title}>Steps</Text>
+                <Text style={styles.title}>Sleep</Text>
                 <BarChart
                     data={{
-                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        labels: labels,
                         datasets: [
                             {
-                                data: [3000, 4500, 5000, 7000, 8000, 9000, 10000],
+                                data: sleepData,
                             },
                         ],
                     }}
                     width={screenWidth - 60} // Thu nhỏ chút cho đẹp
                     height={250}
                     yAxisLabel=""
-                    yAxisSuffix=" Bước"
+                    yAxisSuffix=" Hours"
                     fromZero={true}
                     showBarTops={false}
                     withInnerLines={false}
@@ -31,7 +47,7 @@ export default function Steps() {
                         backgroundColor: '#e0f7fa',
                         backgroundGradientFrom: '#b2ebf2',
                         backgroundGradientTo: '#4dd0e1',
-                        decimalPlaces: 0,
+                        decimalPlaces: 1,
                         barPercentage: 0.75,
                         color: (opacity = 1) => `rgba(0, 96, 100, ${opacity})`,
                         labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,

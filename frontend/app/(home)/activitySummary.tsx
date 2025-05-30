@@ -1,77 +1,101 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, Pressable, Platform } from 'react-native';
 import { icons } from '@/constants/icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
 import { Pedometer } from 'expo-sensors';
+import { PermissionStatus } from 'expo-modules-core';
 import { useRouter } from 'expo-router';
 
-type ActivitySummaryProps = {
-  initialSteps: number;
-  initialSleepTime: string | null;
-  initialWakeTime: string | null;
-};
+interface ActivitySummaryProps {
+  dailyStat: any;
+  healthSnap: any;
+}
 
-export default function ActivitySummary({ initialSteps, initialSleepTime, initialWakeTime }: ActivitySummaryProps) {
+export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySummaryProps) {
   const router = useRouter();
 
-  const [currentSteps, setCurrentSteps] = useState(initialSteps || 0);
-  const [sleepHours, setSleepHours] = useState<number | null>(null);
-  const [lastSentSteps, setLastSentSteps] = useState(initialSteps || 0);
-  const [lastSendTime, setLastSendTime] = useState(Date.now());
-  const isFirstRender = useRef(true);
+  const steps = dailyStat?.steps || 0;
+  const [sleepHours, setSleepHours] = useState<{ hours: number; minutes: number } | null>(null);
+
+  const [currentSteps, setCurrentSteps] = useState(steps);
+
+  const [calories, setCalories] = useState(0);
+
+  const [lastSentSteps, setLastSentSteps] = useState(steps);
+  const lastSendTime = useRef(Date.now());
   const sendInterval = useRef(30000);
 
+  const pedometerAvailable = useRef(false);
+
   useEffect(() => {
-    if (initialSleepTime && initialWakeTime) {
-      const sleep = new Date(initialSleepTime);
-      const wake = new Date(initialWakeTime);
-      // Tính thời gian ngủ bằng mili giây
-      let difference = wake.getTime() - sleep.getTime();
-      // Nếu wakeTime nhỏ hơn sleepTime (ngủ qua đêm) thì cộng thêm 24 giờ vào wakeTime
-      if (difference < 0) {
-        difference += 24 * 60 * 60 * 1000;
+    if (dailyStat?.sleepTime && dailyStat?.wakeTime) {
+      const sleep = new Date(dailyStat.sleepTime);
+      const wake = new Date(dailyStat.wakeTime);
+      let differenceInMillis = wake.getTime() - sleep.getTime();
+      // Xử lý trường hợp ngủ qua đêm
+      if (differenceInMillis < 0) {
+        differenceInMillis += 24 * 60 * 60 * 1000;
       }
-      // Chuyển đổi mili giây sang giờ
-      const hours = difference / (1000 * 60 * 60);
-      setSleepHours(hours);
+      // Tính toán giờ và phút
+      const totalMinutes = Math.floor(differenceInMillis / (1000 * 60));
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      setSleepHours({ hours, minutes });
     } else {
       setSleepHours(null);
     }
-  }, [initialSleepTime, initialWakeTime]);
+  }, [dailyStat?.sleepTime, dailyStat?.wakeTime]);
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      setCurrentSteps(initialSteps || 0);
-      setLastSentSteps(initialSteps || 0); // Cập nhật lastSentSteps ban đầu
-      isFirstRender.current = false;
-    }
-  }, [initialSteps]);
+    setCurrentSteps(steps);
+    setLastSentSteps(steps);
+    lastSendTime.current = Date.now();
+  }, [steps]);
 
-  // Track step bang sensor
+  // Kiểm tra quyền và tính khả dụng của Pedometer
   useEffect(() => {
-    let subscription: any = null;
-    const subscribe = async () => {
+    const checkPedometerAvailability = async () => {
       const isAvailable = await Pedometer.isAvailableAsync();
+      pedometerAvailable.current = isAvailable;
       if (isAvailable) {
-        subscription = Pedometer.watchStepCount(result => {
-          setCurrentSteps(prevSteps => Math.max(prevSteps, initialSteps || 0) + result.steps);
-        });
+        if (status !== 'granted') {
+          const { status: newStatus } = await Pedometer.requestPermissionsAsync();
+          if (newStatus !== 'granted') {
+            console.error('Pedometer permission not granted!');
+            pedometerAvailable.current = false;
+          }
+        }
       } else {
         console.log("Pedometer is not available on this device.");
       }
-    }
-    subscribe();
+    };
+    checkPedometerAvailability();
+  }, []);
+
+
+  // Theo dõi bước chân bằng watchStepCount (cho Android khi getStepCountAsync không hỗ trợ)
+  useEffect(() => {
+    let subscription: any = null;
+    const subscribeToSteps = async () => {
+      if (pedometerAvailable.current) {
+        subscription = Pedometer.watchStepCount(result => {
+          // Quan trọng: Sử dụng hàm cập nhật state để tránh race conditions
+          setCurrentSteps((prevSteps: number) => Math.max(prevSteps, steps) + result.steps);
+        });
+      }
+    };
+    subscribeToSteps();
     return () => {
       if (subscription) {
         subscription.remove();
       }
-    }
-  }, [initialSteps]);
+    };
+  }, [steps, pedometerAvailable]);
 
   // Gui step cho backend sau khi gia tri thay doi 1 khoang dang ke
   useEffect(() => {
-    const updateStepsOnBackend = async () => {
+    const sendStepsOnBackend = async () => {
       try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
@@ -79,10 +103,11 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
           return;
         }
         const currentTime = Date.now();
-        const timeElapsed = currentTime - lastSendTime;
+        const timeElapsed = currentTime - lastSendTime.current;
         const stepsDifference = Math.abs(currentSteps - lastSentSteps);
 
-        if (stepsDifference >= 20 && timeElapsed >= sendInterval.current) {
+        if ((stepsDifference >= 20 || timeElapsed >= sendInterval.current) &&
+          currentSteps > lastSentSteps) {
           const response = await fetch(`${API_BASE_URL}/dailyStat/step`, {
             method: 'PATCH',
             headers: {
@@ -94,7 +119,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
           if (response.ok) {
             console.log('Steps updated on backend:', currentSteps);
             setLastSentSteps(currentSteps);
-            setLastSendTime(currentTime);
+            lastSendTime.current = currentTime;
             // Điều chỉnh thời gian gửi dựa trên tốc độ thay đổi bước chân
             sendInterval.current = stepsDifference < 100 ? 30000 : 15000; // Gửi nhanh hơn nếu đi nhanh
           } else {
@@ -106,9 +131,25 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
       }
     };
 
-    const intervalId = setInterval(updateStepsOnBackend, 5000); // Kiểm tra mỗi 5 giây
+    const intervalId = setInterval(sendStepsOnBackend, 10000); // Kiểm tra mỗi 10 giây
     return () => clearInterval(intervalId);
   }, [currentSteps, lastSentSteps]);
+
+  // Tinh toan calo dot chay dua tren buoc chan
+  useEffect(() => {
+    const calulateCalories = () => {
+      const weight = healthSnap?.weight;
+      const height = healthSnap.height / 100;
+      const stepsWalked = currentSteps;
+
+      const strideLength = height * 0.45;
+      const distanceKm = (stepsWalked * strideLength) / 1000;
+      const caloriesPerKgPerKm = 1; // 1 calo/kg/km
+      const burned = distanceKm * weight * caloriesPerKgPerKm;
+      setCalories(burned);
+    }
+    calulateCalories();
+  }, [currentSteps, healthSnap.height, healthSnap.weight]);
 
   const handleSleepPress = () => {
     router.push('/component/SleepInput');
@@ -137,7 +178,7 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
           </View>
           <Text style={styles.label}>Calories burn from walk</Text>
           <Text style={styles.value}>
-            384 <Text style={styles.unit}>KCal</Text>
+            {calories.toFixed(0)} <Text style={styles.unit}>KCal</Text>
           </Text>
         </View>
       </View>
@@ -150,7 +191,9 @@ export default function ActivitySummary({ initialSteps, initialSleepTime, initia
         <View style={styles.sleepContent}>
           <Text style={styles.label}>Sleep</Text>
           <Text style={styles.value}>
-            {sleepHours !== null ? sleepHours.toFixed(1) : '--'} <Text style={styles.unit}>Hours</Text>
+            {sleepHours !== null ?
+              `${sleepHours.hours} Hour${sleepHours.hours !== 1 ? 's' : ''} ${sleepHours.minutes} Min${sleepHours.minutes !== 1 ? 's' : ''}`
+              : '--'}
           </Text>
         </View>
       </Pressable>

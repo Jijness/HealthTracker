@@ -51,6 +51,21 @@ const getHealthSnap = async (req, res, next) => {
         next(err);
     }
 };
+// lay ban ghi moi nhat cua user hien tai
+const getLatestHealthSnap = async (req, res, next) => {
+    const userId = req.user.userId;
+
+    try {
+        const latestSnap = await healthSnapService.getLatestHealthSnapByUser(userId);
+        if (!latestSnap) {
+            return next(new HttpError('Could not find any health snap for the provided user id.', 404));
+        }
+        res.status(200).json({ healthSnap: latestSnap });
+    } catch (err) {
+        const error = new HttpError('Fetching latest health snap failed, try again later.', 500);
+        return next(error);
+    }
+};
 
 const updateHealthSnap = async (req, res, next) => {
     const snapId = req.params.snapId;
@@ -88,6 +103,7 @@ const deleteHealthSnap = async (req, res, next) => {
 
 export default {
     getHealthSnaps,
+    getLatestHealthSnap,
     createHealthSnap,
     getHealthSnap,
     updateHealthSnap,

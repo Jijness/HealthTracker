@@ -3,13 +3,16 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import API_BASE_URL from '@/apiConfig';
+import API_BASE_URL from '../../apiConfig';
 
 export default function SleepInput() {
   const router = useRouter();
 
-  const [sleepTime, setSleepTime] = useState(new Date());
-  const [wakeTime, setWakeTime] = useState(new Date());
+  const now = new Date();
+  const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+
+  const [sleepTime, setSleepTime] = useState(sixHoursAgo);
+  const [wakeTime, setWakeTime] = useState(now);
   const [modePicker, setModePicker] = useState<'sleep' | 'wake' | null>(null);
 
   const showPicker = (mode: 'sleep' | 'wake') => setModePicker(mode);
@@ -29,20 +32,33 @@ export default function SleepInput() {
         console.error("Authentication token not found");
         return;
       }
-      const sleepTimeString = sleepTime.toISOString();
-      const wakeTimeString = wakeTime.toISOString();
 
-      const response = await fetch(`${API_BASE_URL}/dailystat/sleep}`, {
+      const sleepHours = sleepTime.getHours().toString().padStart(2, '0');
+      const sleepMinutes = sleepTime.getMinutes().toString().padStart(2, '0');
+      const sleepTimeString = `${sleepHours}:${sleepMinutes}`;
+
+      const wakeHours = wakeTime.getHours().toString().padStart(2, '0');
+      const wakeMinutes = wakeTime.getMinutes().toString().padStart(2, '0');
+      const wakeTimeString = `${wakeHours}:${wakeMinutes}`;
+
+      const data = JSON.stringify({
+        sleepTime: sleepTimeString,
+        wakeTime: wakeTimeString,
+      });
+
+      const response = await fetch(`${API_BASE_URL}/dailyStat/sleep`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({
-          sleepTime: sleepTimeString,
-          wakeTime: wakeTimeString
-        }),
+        body: data,
       })
+      if (response.ok) {
+        console.log("updated sleep-wake time");
+      } else {
+        console.log("update sleep-wake failed");
+      }
       router.back(); // Quay lại trang ActivitySummary
     } catch (err) {
       console.error('Error updating sleep infor:', err);
@@ -125,6 +141,6 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 1,
     borderRadius: 8,
-    marginVertical: 10
+    marginVertical: 20
   },
 });

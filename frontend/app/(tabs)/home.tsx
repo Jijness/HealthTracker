@@ -9,19 +9,18 @@ import API_BASE_URL from '../../apiConfig';
 
 
 export default function Home() {
-  const [steps, setSteps] = useState(0);
-  const [sleepTime, setSleepTime] = useState<string | null>(null);
-  const [wakeTime, setWakeTime] = useState<string | null>(null);
+  const [dailyStat, setDailyStat] = useState(null);
+  const [latestHealthSnap, setLatestHealthSnap] = useState(null);
 
   useEffect(() => {
-    const fetchTodayStats = async () => {
+    const fetchData = async () => {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        console.error('Authentication token not found.');
+        return;
+      }
+      // Fetch DailyStat hôm nay
       try {
-        const token = await AsyncStorage.getItem('token');
-        if (!token) {
-          console.error('Authentication token not found.');
-          return;
-        }
-
         const response = await fetch(`${API_BASE_URL}/dailyStat/today`, {
           method: 'GET',
           headers: {
@@ -33,25 +32,38 @@ export default function Home() {
           const errorData = await response.json();
           console.error('Failed to fetch daily stats:', errorData);
           return;
-        }
-
-        const data = await response.json();
-        if (data && data.stats) {
-          setSteps(data.stats.steps || 0);
-          setSleepTime(data.stats.sleepTime || null);
-          setWakeTime(data.stats.wakeTime || null);
         } else {
-          setSteps(0);
-          setSleepTime(null);
-          setWakeTime(null);
+          const data = await response.json();
+          setDailyStat(data?.stats || null);
+          console.log("DailyStat after fetch:", data?.stats);
         }
-
       } catch (error) {
         console.error('Error fetching today\'s daily stat:', error);
       }
+
+      // Fetch HealthSnap mới nhất
+      try {
+        const healthSnapResponse = await fetch(`${API_BASE_URL}/healthSnap/latest`, {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!healthSnapResponse.ok) {
+          const errorData = await healthSnapResponse.json();
+          console.error('Failed to fetch latest health snap:', errorData);
+        } else {
+          const data = await healthSnapResponse.json();
+          setLatestHealthSnap(data?.healthSnap || null);
+          console.log("LatestHealthSnap after fetch:", data?.healthSnap);
+        }
+      } catch (error) {
+        console.error('Error fetching latest health snap:', error);
+      }
     };
 
-    fetchTodayStats();
+    fetchData();
   }, []);
 
 
@@ -60,8 +72,8 @@ export default function Home() {
       <ScrollView>
         <Header />
         <TabS />
-        <HealthCard />
-        <ActivitySummary initialSteps={steps} initialSleepTime={sleepTime} initialWakeTime={wakeTime} />
+        {latestHealthSnap && <HealthCard healthSnap={latestHealthSnap} />}
+        {latestHealthSnap && <ActivitySummary dailyStat={dailyStat} healthSnap={latestHealthSnap} />}
       </ScrollView>
     </SafeAreaView>
   );

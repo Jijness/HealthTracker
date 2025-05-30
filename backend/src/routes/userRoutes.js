@@ -30,7 +30,7 @@ userRoutes.post('/login',
 
 
 userRoutes.patch('/updateInfor', checkAuth,
-    [   
+    [
         check('full_name').notEmpty(),
         check('gender').isIn(['male', 'female']),
         check('birth_year').isInt({ min: 1900, max: new Date().getFullYear() }),
@@ -38,6 +38,14 @@ userRoutes.patch('/updateInfor', checkAuth,
     ],
     userController.updateInfor
 );
+userRoutes.patch('/change-password', checkAuth,
+    [
+        check('currentPassword').notEmpty(),
+        check('newPassword').isLength({ min: 6 }),
+    ],
+    userController.changePassword
+);
+
 
 userRoutes.delete('/:uid', userController.deleteUser);
 

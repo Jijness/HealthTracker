@@ -2,10 +2,20 @@ import HealthSnap from "../models/HealthSnap.js";
 import mongoose from "mongoose";
 
 const getAllHealthSnapByUser = async (userId) => {
-    return await HealthSnap
+    const snaps = await HealthSnap
         .find({ user: new mongoose.Types.ObjectId(userId) })
-        .sort({ createdAt: -1 });
+        .sort({ createdAt: -1 })
+        .limit(7);
+    return snaps.reverse();
 };
+// lay ban ghi healthSnap moi nhat cua user
+const getLatestHealthSnapByUser = async (userId) => {
+    return await HealthSnap
+        .findOne({ user: new mongoose.Types.ObjectId(userId) })
+        .sort({ createdAt: -1 })
+        .limit(1);
+};
+
 
 const createHealthSnap = async ({ user, weight, height, bodyFat, muscleMass, note }) => {
     const newSnap = new HealthSnap({
@@ -34,6 +44,7 @@ const deleteHealthSnap = async (snapId) => {
 
 export default {
     getAllHealthSnapByUser,
+    getLatestHealthSnapByUser,
     createHealthSnap,
     getHealthSnapById,
     updateHealthSnap,

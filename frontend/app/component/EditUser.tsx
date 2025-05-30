@@ -9,14 +9,20 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import API_BASE_URL from '../../apiConfig';
 
 export default function ChangePassword() {
+  const router = useRouter();
+
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleChangePassword = () => {
+  const handleChangePassword = async () => {
     setError('');
     if (!currentPassword || !newPassword || !confirmPassword) {
       setError('Please fill in all information');
@@ -26,10 +32,42 @@ export default function ChangePassword() {
       setError('New password and confirmation do not match');
       return;
     }
+    setLoading(true);
+    try {
+      const token = await AsyncStorage.getItem('token');
+      if (!token) {
+        setError('Authentication token not found.');
+        return;
+      }
+      const response = await fetch(`${API_BASE_URL}/users/change-password`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      if (response.ok) {
+        Alert.alert('Successful', 'Password changed successfully!');
+        setCurrentPassword('');
+        setNewPassword('');
+        setConfirmPassword('');
+        router.push('/login');
+      } else {
+        setError('Failed to change password. Please try again.');
+      }
+    } catch (err: any) {
+      setError(err.message || 'An unexpected error occurred.');
+    } finally {
+      setLoading(false);
+    }
+
+
     Alert.alert('Successful', 'Changed password!');
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
+
   };
 
   return (
@@ -72,8 +110,12 @@ export default function ChangePassword() {
           />
         </View>
 
-        <TouchableOpacity style={styles.button} onPress={handleChangePassword}>
-          <Text style={styles.buttonText}>Save</Text>
+        <TouchableOpacity
+          style={[styles.button, loading && styles.buttonDisabled]}
+          onPress={handleChangePassword}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>{loading ? 'Saving...' : 'Save'}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -81,6 +123,9 @@ export default function ChangePassword() {
 }
 
 const styles = StyleSheet.create({
+  buttonDisabled: {
+    backgroundColor: '#cccccc',
+  },
   safeArea: {
     flex: 1,
     backgroundColor: '#FFC730',

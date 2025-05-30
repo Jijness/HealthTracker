@@ -5,12 +5,8 @@ import dailyStatService from "../services/dailyStatService.js";
 const getDailyStats = async (req, res, next) => {
     const userId = req.user.userId;
 
-    const end = new Date(); // today
-    const begin = new Date(end);
-    begin.setMonth(end.getMonth() - 3);
-
     try {
-        const stats = await dailyStatService.getAllDailyStatByUser(userId, begin, end);
+        const stats = await dailyStatService.getAllDailyStatByUser(userId);
         res.status(200).json({ stats });
     } catch (err) {
         const error = new HttpError('Fetching dailyStats failed, try again later.', 500);

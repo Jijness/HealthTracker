@@ -81,6 +81,21 @@ const updateInfor = async (req, res, next) => {
     }
 }
 
+const changePassword = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return next(new HttpError('Invalid inputs, please check your data.', 422));
+    }
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.userId;
+    try {
+        const result = await userService.changePassword(userId, currentPassword, newPassword);
+        res.status(200).json(result);
+    } catch (err) {
+        next(err);
+    }
+};
+
 const deleteUser = async (req, res, next) => {
     const userId = req.params.uid;
     try {
@@ -100,5 +115,6 @@ export default {
     register,
     login,
     updateInfor,
+    changePassword,
     deleteUser
 };

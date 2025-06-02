@@ -1,12 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 const { height: windowHeight } = Dimensions.get('window');
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
 const HeightPickerScreen = () => {
+  const { t } = useTranslation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [selectedHeight, setSelectedHeight] = useState(150);
   const router = useRouter();
@@ -38,8 +41,8 @@ const HeightPickerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What is your height1?</Text>
-      <Text style={styles.subtitle}>This help us create your persionalized plan</Text>
+      <Text style={styles.title}>{t('TitileH1')}</Text>
+      <Text style={styles.subtitle}>{t('TitileH2')}</Text>
 
       <View style={styles.wheelWrapper}>
         <View style={styles.highlightLine} />
@@ -77,7 +80,7 @@ const HeightPickerScreen = () => {
         <View style={styles.highlightLine} />
       </View>
       <TouchableOpacity style={styles.button} onPress={handleNext}>
-        <Text style={styles.buttonText}>Next</Text>
+        <Text style={styles.buttonText}>{t('Next')}</Text>
       </TouchableOpacity>
     </View>
   );

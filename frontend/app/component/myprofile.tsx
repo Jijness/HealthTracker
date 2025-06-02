@@ -12,7 +12,8 @@ import { Link, useRouter } from 'expo-router';
 import { icons } from '@/constants/icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 export default function MyProfile() {
     const router = useRouter();
     const [userInfo, setUserInfo] = useState({
@@ -23,7 +24,7 @@ export default function MyProfile() {
         activity_level: '--',
     });
     const [loading, setLoading] = useState(true);
-
+    const { t } = useTranslation();
     useEffect(() => {
         const fetchUserProfile = async () => {
             try {
@@ -72,7 +73,7 @@ export default function MyProfile() {
         return (
             <SafeAreaView style={styles.safeArea}>
                 <ScrollView contentContainerStyle={styles.scrollContainer}>
-                    <Text>Loading...</Text>
+                    <Text>{t('Loading')}</Text>
                 </ScrollView>
             </SafeAreaView>
         );
@@ -81,38 +82,38 @@ export default function MyProfile() {
     return (
         <SafeAreaView style={styles.safeArea}>
             <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text style={styles.title}>Your profile</Text>
+                <Text style={styles.title}>{t('YP')}</Text>
 
                 <View style={styles.avatarContainer}>
                     <Image source={icons.user} style={styles.avatar} />
                     <Link href="/component/Editprofile" asChild>
                         <TouchableOpacity style={styles.editButton}>
-                            <Text style={styles.editText}>Edit</Text>
+                            <Text style={styles.editText}>{t('Edit')}</Text>
                         </TouchableOpacity>
                     </Link>
                     <Text style={styles.name}>{userInfo.username}</Text>
                 </View>
                 <View style={styles.infoBox}>
                     <View style={styles.infoRow}>
-                        <Text style={styles.label}>Full name</Text>
+                        <Text style={styles.label}>{t('Fn')}</Text>
                         <Text style={styles.value}>{userInfo.full_name}</Text>
                     </View>
                     <View style={styles.infoRow}>
-                        <Text style={styles.label}>Gender</Text>
+                        <Text style={styles.label}>{t('G')}</Text>
                         <Text style={styles.value}>{userInfo.gender}</Text>
                     </View>
                     <View style={styles.infoRow}>
-                        <Text style={styles.label}>Birth year</Text>
+                        <Text style={styles.label}>{t('BY')}</Text>
                         <Text style={styles.value}>{userInfo.birth_year}</Text>
                     </View>
                     <View style={styles.infoRow}>
-                        <Text style={styles.label}>Activity level</Text>
+                        <Text style={styles.label}>{t('AL')}</Text>
                         <Text style={styles.value}>{userInfo.activity_level}</Text>
                     </View>
                 </View>
                 <Link href="/(authenticate)/login" asChild>
                     <TouchableOpacity style={styles.Button} onPress={handleLogout}>
-                        <Text style={styles.Text}>Log out</Text>
+                        <Text style={styles.Text}>{t('LO')}</Text>
                     </TouchableOpacity>
                 </Link>
             </ScrollView>

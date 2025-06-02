@@ -4,6 +4,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import API_BASE_URL from '../../apiConfig';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 const ACTIVITY_LEVELS = [
     { label: "Sedentary", value: "sedentary" },
@@ -14,6 +16,7 @@ const ACTIVITY_LEVELS = [
 ];
 
 export default function ActivityLevelScreen() {
+    const { t } = useTranslation();
     const [selected, setSelected] = useState<string | null>(null);
     const router = useRouter();
     const params = useLocalSearchParams<{ gender?: string; birth_year?: string }>();
@@ -53,7 +56,7 @@ export default function ActivityLevelScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Choose your activity level</Text>
+            <Text style={styles.title}>{t('TitileAL')}</Text>
             <View style={styles.buttonContainer}>
                 {ACTIVITY_LEVELS.map((item) => (
                     <TouchableOpacity
@@ -70,7 +73,7 @@ export default function ActivityLevelScreen() {
             </View>
 
             <TouchableOpacity onPress={handleSubmit} style={styles.submitButton}>
-                <Text style={styles.submitButtonText}>Next</Text>
+                <Text style={styles.submitButtonText}>{t('Next')}</Text>
             </TouchableOpacity>
         </View>
     );

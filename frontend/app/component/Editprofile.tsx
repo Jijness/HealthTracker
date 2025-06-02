@@ -3,31 +3,19 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, SafeAreaView, Scro
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 interface Option {
   label: string;
   value: string;
 }
-
 interface SimpleOptionSelectorProps {
   label: string;
   value: string;
   onValueChange: (value: string) => void;
   items: Option[];
+  t: (key: string) => string;
 }
-
-const genderList: Option[] = [
-  { label: 'Male', value: 'male' },
-  { label: 'Female', value: 'female' },
-];
-
-const activityList: Option[] = [
-  { label: 'Sedentary', value: 'sedentary' },
-  { label: 'Light', value: 'light' },
-  { label: 'Moderate', value: 'moderate' },
-  { label: 'Active', value: 'active' },
-  { label: 'Very active', value: 'very_active' },
-];
 
 const SimpleOptionSelector: React.FC<SimpleOptionSelectorProps> = ({ label, value, onValueChange, items }) => {
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
@@ -59,12 +47,27 @@ const SimpleOptionSelector: React.FC<SimpleOptionSelectorProps> = ({ label, valu
 // Phần còn lại của component EditProfile giữ nguyên
 
 export default function EditProfile() {
+  const { t } = useTranslation();
+
   const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [gender, setGender] = useState('');
   const [birthYear, setBirthYear] = useState('');
   const [activityLevel, setActivityLevel] = useState('');
   const [loading, setLoading] = useState(true);
+
+  const genderList: Option[] = [
+    { label: t('Male'), value: 'male' },
+    { label: t('Female'), value: 'female' },
+  ];
+
+  const activityList: Option[] = [
+    { label: t('label'), value: 'sedentary' },
+    { label: t('label2'), value: 'light' },
+    { label: t('label3'), value: 'moderate' },
+    { label: t('label4'), value: 'active' },
+    { label: t('label5'), value: 'very_active' },
+  ];
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -140,7 +143,7 @@ export default function EditProfile() {
     return (
       <SafeAreaView style={styles.safeArea}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <Text>Loading...</Text>
+          <Text>{t('Loading')}</Text>
         </ScrollView>
       </SafeAreaView>
     );
@@ -149,46 +152,48 @@ export default function EditProfile() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Text style={styles.title}>Edit your profile</Text>
+        <Text style={styles.title}>{t('EYP')}</Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Full name</Text>
+          <Text style={styles.label}>{t('FN')}</Text>
           <TextInput
             style={styles.input}
             value={fullName}
             onChangeText={setFullName}
-            placeholder="Your name"
+            placeholder={t('YN')}
           />
         </View>
 
         <SimpleOptionSelector
-          label="Gender"
+          label={t('G')}
           value={gender}
           onValueChange={setGender}
           items={genderList}
+          t={t} // Truyền hàm t xuống
         />
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Birth year</Text>
+          <Text style={styles.label}>{t('BY')}</Text>
           <TextInput
             style={styles.input}
             value={birthYear}
             onChangeText={setBirthYear}
-            placeholder="Enter your birth year (YYYY)"
+            placeholder={t('BY_p')}
             keyboardType="number-pad"
             maxLength={4}
           />
         </View>
 
         <SimpleOptionSelector
-          label="Activity level"
+          label={t('AL')}
           value={activityLevel}
           onValueChange={setActivityLevel}
           items={activityList}
+          t={t} // Truyền hàm t xuống
         />
 
         <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveText}>Save</Text>
+          <Text style={styles.saveText}>{t('Save')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

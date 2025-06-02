@@ -12,7 +12,8 @@ import {
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 export default function ChangePassword() {
   const router = useRouter();
 
@@ -21,7 +22,7 @@ export default function ChangePassword() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const { t } = useTranslation();
   const handleChangePassword = async () => {
     setError('');
     if (!currentPassword || !newPassword || !confirmPassword) {
@@ -48,7 +49,7 @@ export default function ChangePassword() {
         body: JSON.stringify({ currentPassword, newPassword }),
       });
       if (response.ok) {
-        Alert.alert('Successful', 'Password changed successfully!');
+        Alert.alert(t('Alert10'), t('Alert11'));
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -63,7 +64,7 @@ export default function ChangePassword() {
     }
 
 
-    Alert.alert('Successful', 'Changed password!');
+    Alert.alert(t('Alert10'), t('Alert12'));
     setCurrentPassword('');
     setNewPassword('');
     setConfirmPassword('');
@@ -73,40 +74,40 @@ export default function ChangePassword() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.title}>Change password</Text>
+        <Text style={styles.title}>{t('Alert12')}</Text>
 
         {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Current password</Text>
+          <Text style={styles.label}>{t('CP')}</Text>
           <TextInput
             style={styles.input}
             value={currentPassword}
             onChangeText={setCurrentPassword}
             secureTextEntry
-            placeholder="Enter your current password"
+            placeholder={t('CP_p')}
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>New password</Text>
+          <Text style={styles.label}>{t('NP')}</Text>
           <TextInput
             style={styles.input}
             value={newPassword}
             onChangeText={setNewPassword}
             secureTextEntry
-            placeholder="Enter your new password"
+            placeholder={t('NP_p')}
           />
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Retype password</Text>
+          <Text style={styles.label}>{t('RP')}</Text>
           <TextInput
             style={styles.input}
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             secureTextEntry
-            placeholder="Retype your new password"
+            placeholder={t('RP_p')}
           />
         </View>
 
@@ -115,7 +116,7 @@ export default function ChangePassword() {
           onPress={handleChangePassword}
           disabled={loading}
         >
-          <Text style={styles.buttonText}>{loading ? 'Saving...' : 'Save'}</Text>
+          <Text style={styles.buttonText}>{loading ? t('Saving') : t('Save')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>

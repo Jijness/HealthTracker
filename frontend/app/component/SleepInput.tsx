@@ -4,10 +4,11 @@ import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 export default function SleepInput() {
   const router = useRouter();
-
+  const { t } = useTranslation();
   const now = new Date();
   const sixHoursAgo = new Date(now.getTime() - 6 * 60 * 60 * 1000);
 
@@ -59,7 +60,7 @@ export default function SleepInput() {
       } else {
         console.log("update sleep-wake failed");
       }
-      router.back(); // Quay lại trang ActivitySummary
+      router.back(); // Quay láº¡i trang ActivitySummary
     } catch (err) {
       console.error('Error updating sleep infor:', err);
     }
@@ -67,16 +68,16 @@ export default function SleepInput() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Enter Sleep Time</Text>
+      <Text style={styles.title}>{t('EST')}</Text>
 
       {/* Sleep */}
       <TouchableOpacity onPress={() => showPicker('sleep')} style={styles.button}>
-        <Text>Sleep: {sleepTime.toLocaleTimeString()}</Text>
+        <Text>{t('Sl')} {sleepTime.toLocaleTimeString()}</Text>
       </TouchableOpacity>
 
       {/* Wake */}
       <TouchableOpacity onPress={() => showPicker('wake')} style={styles.button}>
-        <Text>Wake:  {wakeTime.toLocaleTimeString()}</Text>
+        <Text>{t('Wa')}  {wakeTime.toLocaleTimeString()}</Text>
       </TouchableOpacity>
 
       <DateTimePickerModal
@@ -91,7 +92,7 @@ export default function SleepInput() {
 
 
       <TouchableOpacity style={styles.saveButton} onPress={handleSaveSleepTime}>
-        <Text style={styles.saveText}>Save</Text>
+        <Text style={styles.saveText}>{t('Save')}</Text>
       </TouchableOpacity>
     </View>
   );

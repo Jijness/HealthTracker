@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import API_BASE_URL from '../../apiConfig';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 
 const { height: windowHeight } = Dimensions.get('window');
@@ -12,6 +14,7 @@ const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
 const WeightPickerScreen = () => {
+  const { t } = useTranslation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const [selectedWeight, setSelectedWeight] = useState(50);
   const router = useRouter();
@@ -65,8 +68,8 @@ const WeightPickerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What is your weight1?</Text>
-      <Text style={styles.subtitle}>This help us create your persionalized plan</Text>
+      <Text style={styles.title}>{t('TitileW1')}</Text>
+      <Text style={styles.subtitle}>{t('TitileW2')}</Text>
 
       <View style={styles.wheelWrapper}>
         <View style={styles.highlightLine} />
@@ -104,7 +107,7 @@ const WeightPickerScreen = () => {
         <View style={styles.highlightLine} />
       </View>
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Next</Text>
+        <Text style={styles.buttonText}>{t('Next')}</Text>
       </TouchableOpacity>
     </View>
   );

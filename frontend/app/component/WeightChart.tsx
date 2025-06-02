@@ -1,6 +1,8 @@
 import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -9,11 +11,12 @@ interface WeightChartProps {
 }
 
 export default function WeightChart({ data }: WeightChartProps) {
+  const { t } = useTranslation();
   if (!Array.isArray(data) || data.length === 0) {
     return (
       <View style={styles.container}>
         <View style={styles.card}>
-          <Text style={styles.title}>Weight</Text>
+          <Text style={styles.title}>{t('Weight')}</Text>
           <Text>No weight data available.</Text>
         </View>
       </View>
@@ -29,7 +32,7 @@ export default function WeightChart({ data }: WeightChartProps) {
   return (
     <View style={styles.container}>
       <View style={styles.card}>
-        <Text style={styles.title}>Weight</Text>
+        <Text style={styles.title}>{t('Weight')}</Text>
         <LineChart
           data={{
             labels: labels,
@@ -40,7 +43,7 @@ export default function WeightChart({ data }: WeightChartProps) {
                 strokeWidth: 2,
               },
             ],
-            legend: ['Weight'],
+            legend: [t('Weight')],
           }}
           width={screenWidth - 60}
           height={250}

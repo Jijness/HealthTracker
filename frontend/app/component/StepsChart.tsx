@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 const screenWidth = Dimensions.get('window').width;
 
 interface StepsChartProps {
@@ -13,14 +14,14 @@ export default function Steps({ data }: StepsChartProps) {
         if (!item.step) return 0;
         return item.step;
     });
-
+    const { t } = useTranslation();
     const labels = data.map(item => new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
 
 
     return (
         <View style={styles.container}>
             <View style={styles.card}>
-                <Text style={styles.title}>Steps</Text>
+                <Text style={styles.title}>{t('Step')}</Text>
                 <BarChart
                     data={{
                         labels: labels,
@@ -33,7 +34,7 @@ export default function Steps({ data }: StepsChartProps) {
                     width={screenWidth - 60} // Thu nhỏ chút cho đẹp
                     height={250}
                     yAxisLabel=""
-                    yAxisSuffix=" Steps"
+                    yAxisSuffix={t('StepC')}
                     fromZero={true}
                     showBarTops={false}
                     withInnerLines={false}

@@ -35,7 +35,6 @@ export default function Home() {
         } else {
           const data = await response.json();
           setDailyStat(data?.stats || null);
-          console.log("DailyStat after fetch:", data?.stats);
         }
       } catch (error) {
         console.error('Error fetching today\'s daily stat:', error);
@@ -56,7 +55,6 @@ export default function Home() {
         } else {
           const data = await healthSnapResponse.json();
           setLatestHealthSnap(data?.healthSnap || null);
-          console.log("LatestHealthSnap after fetch:", data?.healthSnap);
         }
       } catch (error) {
         console.error('Error fetching latest health snap:', error);
@@ -83,6 +81,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFC730',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   hello: {
     fontSize: 14,

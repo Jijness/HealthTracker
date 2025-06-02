@@ -1,12 +1,15 @@
 import React, { useRef, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Animated, Dimensions } from 'react-native';
 import { Link, useLocalSearchParams, useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 const { height } = Dimensions.get('window');
 const ITEM_HEIGHT = 60;
 const VISIBLE_ITEMS = 5;
 
 const BirthYearPickerScreen = () => {
+  const { t } = useTranslation();
   const scrollY = useRef(new Animated.Value(0)).current;
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: 100 }, (_, i) => currentYear - i);
@@ -33,8 +36,8 @@ const BirthYearPickerScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>What's your birth year?</Text>
-      <Text style={styles.subtitle}>You can always change it later</Text>
+      <Text style={styles.title}>{t('TitleBY1')}</Text>
+      <Text style={styles.subtitle}>{t('TitleBY2')}</Text>
 
       <View style={styles.wheelWrapper}>
         <View style={styles.highlightLine} />
@@ -89,7 +92,7 @@ const BirthYearPickerScreen = () => {
           });
         }}
       >
-        <Text style={styles.buttonText}>Next</Text>
+        <Text style={styles.buttonText}>{t('Next')}</Text>
       </TouchableOpacity>
 
     </View>

@@ -4,9 +4,11 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
 import { useForm, Controller, useFormState } from 'react-hook-form';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 const HealthSnapForm = () => {
     const router = useRouter();
+    const { t } = useTranslation();
     const { control, handleSubmit, formState: { errors, isValid } } = useForm({
         defaultValues: {
             weight: '',
@@ -32,7 +34,7 @@ const HealthSnapForm = () => {
         try {
             const token = await AsyncStorage.getItem('token');
             if (!token) {
-                Alert.alert('Error', 'Authentication token not found.');
+                Alert.alert(t('Erorr'), t('ATNF'));
                 return;
             }
 
@@ -53,15 +55,15 @@ const HealthSnapForm = () => {
 
             if (!response.ok) {
                 const errorData = await response.json();
-                Alert.alert('Error', errorData.message || 'Failed to save information.');
+                Alert.alert(t('Erorr'), errorData.message || t('FTS'));
                 return;
             }
 
-            Alert.alert('Success', 'Health information saved successfully.');
+            Alert.alert(t('Erorr'), t('HIS'));
             router.back();
         } catch (error: any) {
             console.error('API call error:', error);
-            Alert.alert('Error', 'Could not connect to the server.');
+            Alert.alert(t('Erorr'), t('CC'));
         }
     };
 
@@ -76,20 +78,20 @@ const HealthSnapForm = () => {
             keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
         >
             <ScrollView contentContainerStyle={styles.container}>
-                <Text style={styles.title}>Enter your body information</Text>
+                <Text style={styles.title}>{t('TitileI')}</Text>
 
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Weight (kg) <Text style={styles.required}>*</Text></Text>
+                    <Text style={styles.label}>{t('Weight')} ({t('W')}) <Text style={styles.required}>*</Text></Text>
                     <Controller
                         control={control}
                         rules={{
                             required: 'Weight is required',
                             pattern: {
                                 value: /^[0-9.]+$/,
-                                message: 'Weight must be a number',
+                                message: t('WT1'),
                             },
-                            min: { value: 30, message: 'Minimum weight is 30 kg' },
-                            max: { value: 200, message: 'Maximum weight is 200 kg' },
+                            min: { value: 30, message: t('WT2') },
+                            max: { value: 200, message: t('WT3') },
                         }}
                         render={({ field: { onChange, value } }) => (
                             <TextInput
@@ -105,17 +107,17 @@ const HealthSnapForm = () => {
                 </View>
 
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Height (cm) <Text style={styles.required}>*</Text></Text>
+                    <Text style={styles.label}>{t('Height')} ({t('H')}) <Text style={styles.required}>*</Text></Text>
                     <Controller
                         control={control}
                         rules={{
                             required: 'Height is required',
                             pattern: {
                                 value: /^[0-9.]+$/,
-                                message: 'Height must be a number',
+                                message: t('HT1'),
                             },
-                            min: { value: 100, message: 'Minimum height is 100 cm' },
-                            max: { value: 250, message: 'Maximum height is 250 cm' },
+                            min: { value: 100, message: t('HT2') },
+                            max: { value: 250, message: t('HT2') },
                         }}
                         render={({ field: { onChange, value } }) => (
                             <TextInput
@@ -131,16 +133,16 @@ const HealthSnapForm = () => {
                 </View>
 
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Body Fat (%)</Text>
+                    <Text style={styles.label}>{t('BF')} ({t('B')})</Text>
                     <Controller
                         control={control}
                         rules={{
                             pattern: {
                                 value: /^[0-9.]+$/,
-                                message: 'Body Fat must be a number',
+                                message: t('BF1'),
                             },
-                            min: { value: 0, message: 'Minimum Body Fat is 0%' },
-                            max: { value: 100, message: 'Maximum Body Fat is 100%' },
+                            min: { value: 0, message: t('BF2') },
+                            max: { value: 100, message: t('BF3') },
                         }}
                         render={({ field: { onChange, value } }) => (
                             <TextInput
@@ -156,13 +158,13 @@ const HealthSnapForm = () => {
                 </View>
 
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Muscle Mass (kg)</Text>
+                    <Text style={styles.label}>{t('MM')} ({t('H')})</Text>
                     <Controller
                         control={control}
                         rules={{
                             pattern: {
                                 value: /^[0-9.]+$/,
-                                message: 'Muscle Mass must be a number',
+                                message: t('MM1'),
                             },
                             validate: (value, formValues) => {
                                 if (formValues.weight && formValues.bodyFat) {
@@ -188,7 +190,7 @@ const HealthSnapForm = () => {
                 </View>
 
                 <View style={styles.inputGroup}>
-                    <Text style={styles.label}>Note</Text>
+                    <Text style={styles.label}>{t('Note')}</Text>
                     <Controller
                         control={control}
                         render={({ field: { onChange, value } }) => (
@@ -198,7 +200,7 @@ const HealthSnapForm = () => {
                                 onChangeText={onChange}
                                 multiline
                                 numberOfLines={3}
-                                placeholder="Add a note"
+                                placeholder={t('Note_p')}
                             />
                         )}
                         name="note"
@@ -211,7 +213,7 @@ const HealthSnapForm = () => {
                         onPress={handleSubmit(handleSave)}
                         disabled={!isValid}
                     >
-                        <Text style={styles.buttonText}>Save</Text>
+                        <Text style={styles.buttonText}>{t('Save')}</Text>
                     </TouchableOpacity>
                 </View>
             </ScrollView>

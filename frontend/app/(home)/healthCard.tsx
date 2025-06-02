@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { icons } from '@/constants/icon';
 import { ProgressBar } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 interface HealthSnap {
   totalScore?: number;
@@ -15,6 +17,7 @@ interface HealthCardProps {
 }
 
 export default function HealthCard({ healthSnap }: HealthCardProps) {
+  const { t } = useTranslation();
   const router = useRouter();
   const handlePress = () => {
     router.push('../component/healthSnapForm');
@@ -47,9 +50,9 @@ export default function HealthCard({ healthSnap }: HealthCardProps) {
   };
   const healthPercentage = calculateHealthPercentage(healthSnap);
   const progress = healthPercentage / 100;
-  const statusText = healthPercentage > 70 ? 'You are healthy' : 'Keep improving';
+  const statusText = healthPercentage > 70 ? t('TitleHC1') : t('TitleHC2');
   const progressBarColor = healthPercentage > 50 ? '#FDD835' : '#FFAB91';
-  const subText = healthPercentage > 70 ? 'Keep it up! Healthy lifestyle on track' : 'Small steps lead to big changes';
+  const subText = healthPercentage > 70 ? t('TitleHC3') : t('TitleHC4');
 
   return (
     <Pressable onPress={handlePress} style={styles.card}>

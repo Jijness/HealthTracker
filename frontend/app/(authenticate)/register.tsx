@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import '../../i18n';
 
 export default function RegisterScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -20,16 +21,16 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     if (!username || !email || !password) {
-      return Alert.alert('Please enter your information!');
+      return Alert.alert(t('Alert3'));
     }
     setLoading(true);
     try {
       await registerUser({ username, email, password });
-      Alert.alert('Register successfully!', undefined, [
-        { text: 'OK', onPress: () => router.push('./login') }
+      Alert.alert(t('Alert4'), undefined, [
+        { text: t('ok'), onPress: () => router.push('./login') }
       ]);
     } catch (err: any) {
-      Alert.alert('Failed to register', err.response?.data?.message || err.message);
+      Alert.alert(t('Alert5'), err.response?.data?.message || err.message);
     } finally {
       setLoading(false);
     }
@@ -41,11 +42,11 @@ export default function RegisterScreen() {
         <Image source={images.logo} style={styles.logo} />
         <Text style={styles.appTitle}>Healthy tracker</Text>
       </View>
-      <Text style={styles.header}>Create an account</Text>
-      <Text style={styles.subHeader}>Enter your email to sign up for this app</Text>
-      <TextInput placeholder="username" value={username} onChangeText={setUsername} style={styles.input} autoCapitalize="none" autoCorrect={false} />
-      <TextInput placeholder="email@domain.com" value={email} onChangeText={setEmail} style={styles.input} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
-      <TextInput placeholder="password" value={password} onChangeText={setPassword} style={styles.input} secureTextEntry autoCapitalize="none" autoCorrect={false} />
+      <Text style={styles.header}>{t('TitleSignin1')}</Text>
+      <Text style={styles.subHeader}>{t('TitleSignin2')}</Text>
+      <TextInput placeholder={t('username_placeholder')} value={username} onChangeText={setUsername} style={styles.input} autoCapitalize="none" autoCorrect={false} />
+      <TextInput placeholder={t('email_placeholder')} value={email} onChangeText={setEmail} style={styles.input} keyboardType="email-address" autoCapitalize="none" autoCorrect={false} />
+      <TextInput placeholder={t('password_placehoder')} value={password} onChangeText={setPassword} style={styles.input} secureTextEntry autoCapitalize="none" autoCorrect={false} />
 
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
@@ -53,29 +54,29 @@ export default function RegisterScreen() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'Please wait...' : 'Register'}
+          {loading ? t('Loading') : t('Sign up')}
         </Text>
       </TouchableOpacity>
 
       <Text style={styles.switchText}>
-        Already have an account?{' '}
+        {t('TitleSignin3')}{' '}
         <Text style={styles.linkText} onPress={() => router.push('./login')}>
-          Login
+          {t('Login')}
         </Text>
       </Text>
 
-      <Text style={styles.orText}>or</Text>
+      <Text style={styles.orText}>{t('Or')}</Text>
 
       <TouchableOpacity style={styles.googleButton}>
         <Image source={icons.google} style={styles.googleIcon} />
-        <Text style={styles.googleText}>Continue with Google</Text>
+        <Text style={styles.googleText}>{t('CwGG')}</Text>
       </TouchableOpacity>
 
       <Text style={styles.policyText}>
-        By clicking continue, you agree to our{' '}
-        <Text style={styles.linkText}>Terms of Service</Text> and{' '}
-        <Text style={styles.linkText}>Privacy Policy</Text>
-      </Text>
+              {t('ClickGG1')}{' '}
+              <Text style={styles.linkText}>{t('ClickGG2')}</Text> {t('And')}{' '}
+              <Text style={styles.linkText}>{t('ClickGG3')}</Text>
+            </Text>
     </View>
   );
 }

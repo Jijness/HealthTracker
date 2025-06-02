@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, Dimensions, StyleSheet } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
-
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 const screenWidth = Dimensions.get('window').width;
 
 interface SleepChartProps {
@@ -9,6 +10,7 @@ interface SleepChartProps {
 }
 
 export default function SleepChart({ data }: SleepChartProps) {
+    const { t } = useTranslation();
     const sleepData = data.map(item => {
         if (!item.sleepTime || !item.wakeTime) {
             return 0;
@@ -26,7 +28,7 @@ export default function SleepChart({ data }: SleepChartProps) {
     return (
         <View style={styles.container}>
             <View style={styles.card}>
-                <Text style={styles.title}>Sleep</Text>
+                <Text style={styles.title}>{t('Sleep')}</Text>
                 <BarChart
                     data={{
                         labels: labels,
@@ -39,7 +41,7 @@ export default function SleepChart({ data }: SleepChartProps) {
                     width={screenWidth - 60} // Thu nhỏ chút cho đẹp
                     height={250}
                     yAxisLabel=""
-                    yAxisSuffix=" Hours"
+                    yAxisSuffix={t('Hours')}
                     fromZero={true}
                     showBarTops={false}
                     withInnerLines={false}

@@ -4,7 +4,6 @@ import BMIChart from '../component/BMIChart'
 import WeightChart from '../component/WeightChart'
 import SleepChart from '../component/SleepChart'
 import StepsChart from '../component/StepsChart'
-import Calo from '../component/Calo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
 

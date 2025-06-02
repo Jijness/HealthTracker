@@ -3,8 +3,11 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Link } from 'expo-router';
 import { useRouter } from "expo-router";
 import { icons } from "@/constants/icon";
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 export default function GenderScreen() {
+  const { t } = useTranslation();
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const router = useRouter();
 
@@ -14,9 +17,9 @@ export default function GenderScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tell us About Yourself</Text>
+      <Text style={styles.title}>{t('TitleG1')}</Text>
       <Text style={styles.subtitle}>
-        To give you a better experience{"\n"}by knowing your gender
+        {t('TitleG2')}{"\n"}{t('TitleG3')}
       </Text>
 
       <View style={styles.genderContainer}>
@@ -30,7 +33,7 @@ export default function GenderScreen() {
           <View style={styles.iconCircle}>
             <Image source={icons.female} style={styles.icon} />
           </View>
-          <Text style={styles.label}>Female</Text>
+          <Text style={styles.label}>{t('Female')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -43,7 +46,7 @@ export default function GenderScreen() {
           <View style={styles.iconCircle}>
             <Image source={icons.male} style={styles.icon} />
           </View>
-          <Text style={styles.label}>Male</Text>
+          <Text style={styles.label}>{t('Male')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -58,11 +61,11 @@ export default function GenderScreen() {
               });
             }}
           >
-            <Text style={styles.nextButtonText}>Next</Text>
+            <Text style={styles.nextButtonText}>{t('Next')}</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity style={[styles.nextButton, { opacity: 0.5 }]} disabled>
-            <Text style={styles.nextButtonText}>Next</Text>
+            <Text style={styles.nextButtonText}>{t('Next')}</Text>
           </TouchableOpacity>
         )}
       </View>

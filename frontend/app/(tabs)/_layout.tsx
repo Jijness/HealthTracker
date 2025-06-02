@@ -2,10 +2,12 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { Slot, Tabs } from 'expo-router'
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { SafeAreaView } from 'react-native-safe-area-context';
 export default function TabLayout() {
    return (
       <Tabs screenOptions={{
          headerShown: false,
+         tabBarStyle: { backgroundColor: "#FFC730" },
       }}>
          <Tabs.Screen name="home"
             options={{

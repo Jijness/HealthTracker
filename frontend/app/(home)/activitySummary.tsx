@@ -6,6 +6,8 @@ import API_BASE_URL from '../../apiConfig';
 import { Pedometer } from 'expo-sensors';
 import { PermissionStatus } from 'expo-modules-core';
 import { useRouter } from 'expo-router';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 interface ActivitySummaryProps {
   dailyStat: any;
@@ -14,6 +16,7 @@ interface ActivitySummaryProps {
 
 export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySummaryProps) {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const steps = dailyStat?.steps || 0;
   const [sleepHours, setSleepHours] = useState<{ hours: number; minutes: number } | null>(null);
@@ -157,7 +160,7 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Activity Summary</Text>
+      <Text style={styles.title}>{t('TitleA')}</Text>
 
       <View style={styles.row}>
         {/* Steps */}
@@ -165,9 +168,9 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
           <View style={[styles.iconCircle, { backgroundColor: '#4CAF50' }]}>
             <Image source={icons.foot} style={styles.icon} />
           </View>
-          <Text style={styles.label}>Steps counter</Text>
+          <Text style={styles.label}>{t('StepT')}</Text>
           <Text style={styles.value}>
-            {currentSteps} <Text style={styles.unit}>Steps</Text>
+            {currentSteps} <Text style={styles.unit}>{t('Step')}</Text>
           </Text>
         </View>
 
@@ -176,9 +179,9 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
           <View style={[styles.iconCircle, { backgroundColor: '#FF7043' }]}>
             <Image source={icons.fire} style={styles.icon} />
           </View>
-          <Text style={styles.label}>Calories burn from walk</Text>
+          <Text style={styles.label}>{t('Calories')}</Text>
           <Text style={styles.value}>
-            {calories.toFixed(0)} <Text style={styles.unit}>KCal</Text>
+            {calories.toFixed(0)} <Text style={styles.unit}>{t('C')}</Text>
           </Text>
         </View>
       </View>
@@ -189,7 +192,7 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
           <Image source={icons.sleep} style={styles.icon} />
         </View>
         <View style={styles.sleepContent}>
-          <Text style={styles.label}>Sleep</Text>
+          <Text style={styles.label}>{t('EST')}</Text>
           <Text style={styles.value}>
             {sleepHours !== null ?
               `${sleepHours.hours} Hour${sleepHours.hours !== 1 ? 's' : ''} ${sleepHours.minutes} Min${sleepHours.minutes !== 1 ? 's' : ''}`
@@ -205,9 +208,9 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
           <Image source={icons.water} style={styles.icon} />
         </View>
         <View style={styles.hydrateContent}>
-          <Text style={styles.label}>Hydrate</Text>
+          <Text style={styles.label}>{t('Hydrate')}</Text>
           <Text style={styles.value}>
-            1700 <Text style={styles.unit}>ML</Text>
+            1700 <Text style={styles.unit}>{t('ML')}</Text>
           </Text>
         </View>
       </View>
@@ -242,7 +245,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  hydrateBox: {
+  hydrateBox: { 
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',

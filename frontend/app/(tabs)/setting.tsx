@@ -17,10 +17,6 @@ export default function About() {
         <Text style={styles.buttonText}>Language</Text>
         <Ionicons name="chevron-forward" size={20} color="white" />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Theme</Text>
-        <Ionicons name="chevron-forward" size={20} color="white" />
-      </TouchableOpacity>
     </View>
   )
 }

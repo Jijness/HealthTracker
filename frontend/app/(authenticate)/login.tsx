@@ -8,8 +8,11 @@ import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { loginUser } from '../../services/authService';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 export default function LoginScreen() {
+  const { t } = useTranslation();
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -44,12 +47,12 @@ export default function LoginScreen() {
     <View style={styles.container}>
       <View style={styles.logoContainer}>
         <Image source={images.logo} style={styles.logo} />
-        <Text style={styles.appTitle}>Healthy tracker</Text>
+        <Text style={styles.appTitle}>{t('AppN')}</Text>
       </View>
-      <Text style={styles.header}>Sign in to this App</Text>
-      <Text style={styles.subHeader}>Enter your email to sign in for this app</Text>
-      <TextInput placeholder="email@domain.com" value={email} onChangeText={setEmail} style={styles.input} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" />
-      <TextInput placeholder="password" value={password} onChangeText={setPassword} style={styles.input} secureTextEntry autoCapitalize="none" autoCorrect={false} />
+      <Text style={styles.header}>{t('TitileLogin1')}</Text>
+      <Text style={styles.subHeader}>{t('TitileLogin2')}</Text>
+      <TextInput placeholder={t('email_placeholder')} value={email} onChangeText={setEmail} style={styles.input} autoCapitalize="none" autoCorrect={false} keyboardType="email-address" />
+      <TextInput placeholder={t('password_placehoder')} value={password} onChangeText={setPassword} style={styles.input} secureTextEntry autoCapitalize="none" autoCorrect={false} />
 
       <TouchableOpacity
         style={[styles.button, loading && styles.buttonDisabled]}
@@ -57,26 +60,26 @@ export default function LoginScreen() {
         disabled={loading}
       >
         <Text style={styles.buttonText}>
-          {loading ? 'Please wait' : 'Login'}
+          {loading ? t('Loading') : t('Login')}
         </Text>
       </TouchableOpacity>
 
       <Text style={styles.switchText}>
-        Do not have an account?{' '}
+        {t('TitleLogin3')}{' '}
         <Text style={styles.linkText} onPress={() => router.push('./register')}>
-          Register now
+          {t('Sign up')}
         </Text>
       </Text>
 
-      <Text style={styles.orText}>or</Text>
+      <Text style={styles.orText}>{t('Or')}</Text>
       <TouchableOpacity style={styles.googleButton}>
         <Image source={icons.google} style={styles.googleIcon} />
-        <Text style={styles.googleText}>Continue with Google</Text>
+        <Text style={styles.googleText}>{t('CwGG')}</Text>
       </TouchableOpacity>
       <Text style={styles.policyText}>
-        By clicking continue, you agree to our{' '}
-        <Text style={styles.linkText}>Terms of Service</Text> and{' '}
-        <Text style={styles.linkText}>Privacy Policy</Text>
+        {t('ClickGG1')}{' '}
+        <Text style={styles.linkText}>{t('ClickGG2')}</Text> {t('And')}{' '}
+        <Text style={styles.linkText}>{t('ClickGG3')}</Text>
       </Text>
     </View>
   );

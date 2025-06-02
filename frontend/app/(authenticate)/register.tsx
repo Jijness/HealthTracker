@@ -7,6 +7,8 @@ import { icons } from '@/constants/icon';
 import { useRouter } from 'expo-router';
 
 import { registerUser } from '../../services/authService';
+import { useTranslation } from 'react-i18next';
+import '../../i18n';
 
 export default function RegisterScreen() {
   const router = useRouter();

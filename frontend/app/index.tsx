@@ -4,9 +4,13 @@ import { Link, useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+import '../i18n';
+
 export default function App() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkToken = async () => {
@@ -31,13 +35,13 @@ export default function App() {
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <View style={styles.topSection}>
         <Image source={images.logo} style={styles.logo} />
-        <Text style={styles.title}>Healthy tracker</Text>
-        <Text style={styles.subtitle}>Health is your life</Text>
+        <Text style={styles.title}>{t('AppN')}</Text>
+        <Text style={styles.subtitle}>{t('Titile')}</Text>
       </View>
       <View style={styles.bottomSection}>
         <Link href="./(authenticate)/login" asChild>
           <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Start</Text>
+            <Text style={styles.buttonText}>{t('Start')}</Text>
           </TouchableOpacity>
         </Link>
       </View>

@@ -9,7 +9,7 @@ export default {
     icon: "./assets/images/logo.png",
     scheme: "myapp",
     userInterfaceStyle: "automatic",
-    newArchEnabled: true,
+    newArchEnabled: false,
     ios: {
       supportsTablet: true
     },
@@ -39,7 +39,8 @@ export default {
           backgroundColor: "#ffffff"
         }
       ],
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-localization"
     ],
     experiments: {
       typedRoutes: true

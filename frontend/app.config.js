@@ -3,7 +3,7 @@ import 'dotenv/config';
 export default {
   expo: {
     name: "Health Tracker",
-    slug: "frontend",
+    slug: "healthtracker",
     version: "1.0.0",
     orientation: "portrait",
     icon: "./assets/images/logo.png",
@@ -18,7 +18,7 @@ export default {
         foregroundImage: "./assets/images/logo.png",
         backgroundColor: "#ffffff"
       },
-      package: "com.jijness.healthtracker",
+      package: "com.jijnes.healthtracker",
       permissions: [
         "ACTIVITY_RECOGNITION"
       ]
@@ -46,7 +46,7 @@ export default {
     },
     extra: {
       eas: {
-        projectId: 'b2e2987d-69cf-418b-891a-0c3adadec664',
+        "projectId": "44493bcb-aebe-49e7-a154-cee1bea759d2"
       },
       apiUrl: process.env.API_BASE_URL
     }

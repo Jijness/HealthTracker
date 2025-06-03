@@ -24,7 +24,7 @@ export default function SleepChart({ data }: SleepChartProps) {
         return diff / (60 * 60 * 1000);
     });
 
-    const labels = data.map(item => new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const labels = data.map(item => new Date(item.date).toLocaleDateString('vi-VN', { month: 'numeric', day: 'numeric' }));
     return (
         <View style={styles.container}>
             <View style={styles.card}>
@@ -47,7 +47,7 @@ export default function SleepChart({ data }: SleepChartProps) {
                     withInnerLines={false}
                     chartConfig={{
                         backgroundColor: '#e0f7fa',
-                        backgroundGradientFrom: '#b2ebf2',
+                        backgroundGradientFrom: '#fff',
                         backgroundGradientTo: '#4dd0e1',
                         decimalPlaces: 1,
                         barPercentage: 0.75,

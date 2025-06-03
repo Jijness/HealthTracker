@@ -25,7 +25,7 @@ export default function BMIChart({ data }: BMIChartProps) {
     const bmiValue = heightInMeters > 0 ? item.weight / (heightInMeters * heightInMeters) : 0;
     return parseFloat(bmiValue.toFixed(1));
   })
-  const labels = data.map(item => new Date(item.Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+  const labels = data.map(item => new Date(item.Date).toLocaleDateString('vi-VN', { month: 'numeric', day: 'numeric' }));
   return (
     <View style={styles.container}>
       <View style={styles.card}>

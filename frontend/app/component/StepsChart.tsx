@@ -15,7 +15,7 @@ export default function Steps({ data }: StepsChartProps) {
         return item.step;
     });
     const { t } = useTranslation();
-    const labels = data.map(item => new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    const labels = data.map(item => new Date(item.date).toLocaleDateString('vi-VN', { month: 'numeric', day: 'numeric' }));
 
 
     return (

@@ -27,7 +27,7 @@ export default function WeightChart({ data }: WeightChartProps) {
     const weight = item.weight;
     return weight;
   })
-  const labels = data.map(item => new Date(item.Date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+  const labels = data.map(item => new Date(item.Date).toLocaleDateString('vi-VN', { month: 'numeric', day: 'numeric' }));
 
   return (
     <View style={styles.container}>

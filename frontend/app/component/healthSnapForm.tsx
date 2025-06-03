@@ -58,8 +58,7 @@ const HealthSnapForm = () => {
                 Alert.alert(t('Erorr'), errorData.message || t('FTS'));
                 return;
             }
-
-            Alert.alert(t('Erorr'), t('HIS'));
+            Alert.alert(t('Alert10'), t('HIS'));
             router.back();
         } catch (error: any) {
             console.error('API call error:', error);

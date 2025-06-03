@@ -12,12 +12,13 @@ const InitialLayout = () => {
 };
 const RootLayout = () => {
   const colorScheme = useColorScheme();
-  const statusBarColor = '#FFC730';
+  const statusBarColor = 'transparent';
 
   return (
-    <SafeAreaView style={{ flex: 1, paddingTop: 40, backgroundColor: statusBarColor }}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <SafeAreaView style={{ flex: 1 }}>
           <StatusBar style="dark" backgroundColor={statusBarColor} translucent={true} />
           <Stack
             screenOptions={{
@@ -30,9 +31,10 @@ const RootLayout = () => {
             <Stack.Screen name="(userInforBody)" />
             <Stack.Screen name="(tabs)" />
           </Stack>
-        </ThemeProvider>
-      </GestureHandlerRootView>
-    </SafeAreaView>
+        </SafeAreaView>
+      </ThemeProvider>
+    </GestureHandlerRootView>
+
   );
 };
 

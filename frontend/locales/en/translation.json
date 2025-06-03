@@ -128,5 +128,8 @@
     "Hours": " Hours",
     "EST": "Sleep time",
     "Sl": "Sleep:",
-    "Wa": "Wake:"
+    "Wa": "Wake:",
+    "Home": "Home",
+    "Analysis": "Analysis",
+    "Profile": "Profile"
 }

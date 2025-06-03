@@ -130,5 +130,22 @@
   "StepC": " Bước",
   "Home": "Trang chủ",
   "Analysis": "Biểu đồ",
-  "Profile": "Hồ sơ"
+  "Profile": "Hồ sơ",
+  "Health Metrics": "Chỉ số sức khỏe",
+    "BMI": "BMI",
+    "BMR": "BMR",
+    "TDEE": "TDEE",
+    "calories/day": "calo/ngày",
+    "Underweight": "Thiếu cân",
+    "Overweight": "Thừa cân",
+    "Normal": "Bình thường",
+    "Eat more, aim for around": "Ăn nhiều hơn, hướng đến khoảng",
+    "calories": "calo",
+    "Eat less, aim for around": "Ăn ít hơn, hướng đến khoảng",
+    "Maintain current intake": "Duy trì lượng calo hiện tại",
+    "Good Health": "Sức khỏe tốt",
+    "Needs Attention": "Cần chú ý",
+    "Keep it up!": "Hãy tiếp tục!",
+    "Focus on improvement": "Tập trung cải thiện",
+    "Your Health Metrics": "Các chỉ số sức khỏe của bạn"
 }

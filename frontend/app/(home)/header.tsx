@@ -14,7 +14,6 @@ export default function Header() {
         <View style={styles.bellWrapper}>
           <Image source={icons.bell} style={styles.bellIcon} />
         </View>
-        <Image source={icons.user} style={styles.avatar} />
       </View>
     </View>
   );

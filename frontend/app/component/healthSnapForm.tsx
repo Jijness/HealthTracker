@@ -67,10 +67,6 @@ const HealthSnapForm = () => {
         }
     };
 
-    const handleCancel = () => {
-        router.back();
-    };
-
     return (
         <KeyboardAvoidingView
             style={{ flex: 1 }}
@@ -279,19 +275,13 @@ const styles = StyleSheet.create({
         marginTop: 30,
     },
     saveButton: {
-        backgroundColor: '#FF8C00', // Màu cam cháy
-        paddingVertical: 12,
-        paddingHorizontal: 30,
-        borderRadius: 8,
-    },
-    cancelButton: {
-        backgroundColor: '#4682B4', // Màu xanh dương
+        backgroundColor: 'black', // Màu cam cháy
         paddingVertical: 12,
         paddingHorizontal: 30,
         borderRadius: 8,
     },
     buttonText: {
-        color: '#FFF',
+        color: 'white',
         fontSize: 16,
         fontWeight: 'bold',
     },

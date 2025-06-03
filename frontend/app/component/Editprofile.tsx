@@ -155,7 +155,7 @@ export default function EditProfile() {
         <Text style={styles.title}>{t('EYP')}</Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>{t('FN')}</Text>
+          <Text style={styles.label}>{t('Fn')}</Text>
           <TextInput
             style={styles.input}
             value={fullName}

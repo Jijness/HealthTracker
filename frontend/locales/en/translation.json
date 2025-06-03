@@ -131,5 +131,22 @@
     "Wa": "Wake:",
     "Home": "Home",
     "Analysis": "Analysis",
-    "Profile": "Profile"
+    "Profile": "Profile",
+    "Health Metrics": "Health Metrics",
+    "BMI": "BMI",
+    "BMR": "BMR",
+    "TDEE": "TDEE",
+    "calories/day": "calories/day",
+    "Underweight": "Underweight",
+    "Overweight": "Overweight",
+    "Normal": "Normal",
+    "Eat more, aim for around": "Eat more, aim for around",
+    "calories": "calories",
+    "Eat less, aim for around": "Eat less, aim for around",
+    "Maintain current intake": "Maintain current intake",
+    "Good Health": "Good Health",
+    "Needs Attention": "Needs Attention",
+    "Keep it up!": "Keep it up!",
+    "Focus on improvement": "Focus on improvement",
+    "Your Health Metrics": "Your Health Metrics"
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     View,
     Text,
@@ -14,6 +14,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import API_BASE_URL from '../../apiConfig';
 import { useTranslation } from 'react-i18next';
 import '../../i18n';
+import { useFocusEffect } from '@react-navigation/native';
+
 export default function MyProfile() {
     const router = useRouter();
     const [userInfo, setUserInfo] = useState({
@@ -25,40 +27,42 @@ export default function MyProfile() {
     });
     const [loading, setLoading] = useState(true);
     const { t } = useTranslation();
-    useEffect(() => {
-        const fetchUserProfile = async () => {
-            try {
-                const token = await AsyncStorage.getItem('token');
-                if (!token) {
-                    router.replace('/(authenticate)/login'); // Redirect nếu không có token
-                    return;
-                }
-
-                const response = await fetch(`${API_BASE_URL}/users/infor`, {
-                    method: 'GET',
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
-                // console.log(response);
-
-                if (!response.ok) {
-                    console.error('Failed to fetch user profile:', response.status);
-                    return;
-                }
-
-                const data = await response.json();
-                setUserInfo(data.user);
-            } catch (error) {
-                console.error('Error fetching user profile:', error);
-                // Xử lý lỗi
-            } finally {
-                setLoading(false);
+    const fetchUserProfile = useCallback(async () => {
+        try {
+            const token = await AsyncStorage.getItem('token');
+            if (!token) {
+                router.replace('/(authenticate)/login'); // Redirect nếu không có token
+                return;
             }
-        };
 
-        fetchUserProfile();
-    }, [router]);
+            const response = await fetch(`${API_BASE_URL}/users/infor`, {
+                method: 'GET',
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+            // console.log(response);
+
+            if (!response.ok) {
+                console.error('Failed to fetch user profile:', response.status);
+                return;
+            }
+
+            const data = await response.json();
+            setUserInfo(data.user);
+        } catch (error) {
+            console.error('Error fetching user profile:', error);
+            // Xử lý lỗi
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            fetchUserProfile();
+        }, [fetchUserProfile])
+    );
+
 
     const handleLogout = async () => {
         try {

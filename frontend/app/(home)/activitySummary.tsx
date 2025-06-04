@@ -28,7 +28,7 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
   const pedometerAvailable = useRef(false);
   // Lưu trữ số bước *tổng cộng của thiết bị* tại thời điểm bắt đầu theo dõi
   // Dùng để tính toán số bước *tăng thêm trong phiên hiện tại*
-  const deviceTotalStepsOnMount = useRef<number | null>(null);
+  const deviceTotalStepsAtSessionStart = useRef<number | null>(null);
 
   // Ref cho thời điểm cuối cùng dữ liệu được gửi lên backend
   const lastSendTime = useRef(Date.now());
@@ -67,7 +67,7 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
     lastSendTime.current = Date.now();
     // Khi initialDailySteps thay đổi, cần reset điểm neo của pedometer
     // để nó được tính toán lại cho ngày mới.
-    deviceTotalStepsOnMount.current = null;
+    deviceTotalStepsAtSessionStart.current = null;
   }, [initialStepsFromDailyStat]);
 
   // 1, Kiểm tra quyền và tính khả dụng của Pedometer, thiết lập điểm neo ban đầu
@@ -107,56 +107,38 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
 
     const subscribeToSteps = async () => {
       if (pedometerAvailable.current) {
-        if (deviceTotalStepsOnMount.current === null) {
-          const end = new Date();
-          const start = new Date(end);
-          try {
-            // Tạm thời, để loại bỏ lỗi, hãy loại bỏ getStepCountAsync trong useEffect này
-            // nếu bạn đang nhắm mục tiêu Android cụ thể
-            // Hoặc chỉ gọi nó nếu Platform.OS === 'ios'
-            if (Platform.OS === 'android') {
-              const result = await Pedometer.getStepCountAsync(start, end);
-              deviceTotalStepsOnMount.current = result.steps;
-              console.log(`Initial Android Pedometer total: ${result.steps}`);
-            } else {
-              // Trên Android, watchStepCount sẽ cung cấp tổng số bước từ khi nó được bắt đầu.
-              // Chúng ta sẽ lấy điểm neo từ lần đầu tiên watchStepCount báo cáo.
-              console.log("Pedometer watch will set initial anchor on first update for Android.");
-            }
-
-          } catch (error) {
-            console.log("Error setting initial pedometer anchor:", error);
-            // Vẫn cho phép watchStepCount chạy, nhưng có thể bị sai lệch nếu không có điểm neo chính xác.
-          }
-        }
         console.log("Subscribing to Pedometer updates.");
         subscription = Pedometer.watchStepCount(result => {
           // 'result.steps' là TỔNG số bước mà thiết bị đã ghi nhận từ đầu ngày.
           // Chúng ta cần tính toán số bước *mới được thêm* kể từ điểm neo của mình.
-          if (deviceTotalStepsOnMount.current === null) {
+          if (deviceTotalStepsAtSessionStart.current === null) {
             // Nếu đây là lần đầu tiên watchStepCount báo cáo, lấy đây làm điểm neo của thiết bị
-            deviceTotalStepsOnMount.current = result.steps;
+            deviceTotalStepsAtSessionStart.current = result.steps;
             console.log(`Pedometer: First update, setting device total steps anchor to ${result.steps}`);
           }
           // Số bước mới được ghi nhận trong phiên hiện tại từ pedometer
           // Đảm bảo không âm, nếu điểm neo chưa có thì coi như 0
-          const stepsFromPedometerInSession = deviceTotalStepsOnMount.current !== null
-            ? Math.max(0, result.steps - deviceTotalStepsOnMount.current)
+          const stepsGainedInSession = deviceTotalStepsAtSessionStart.current !== null
+            ? Math.max(0, result.steps - deviceTotalStepsAtSessionStart.current)
             : 0;
           // Tổng số bước hiển thị là:
           // số bước ban đầu từ backend + số bước mới được Pedometer ghi nhận trong phiên này.
-          const newTotalDisplaySteps = initialStepsFromDailyStat + stepsFromPedometerInSession;
+          const newTotalDisplaySteps = initialStepsFromDailyStat + stepsGainedInSession;
           // Cập nhật state currentSteps, đảm bảo số bước không bao giờ giảm
           setCurrentSteps((prev: number) => Math.max(prev, newTotalDisplaySteps));
 
           // Log để gỡ lỗi
-          console.log(`Pedometer update: Device total=${result.steps}, Anchor: (session start total)=${deviceTotalStepsOnMount.current}, Steps in session=${stepsFromPedometerInSession}, Display Total=${newTotalDisplaySteps}`);
+          console.log(`Pedometer update: Device total=${result.steps}, Anchor: (session start total)=${deviceTotalStepsAtSessionStart.current}, Steps in session=${stepsGainedInSession}, Display Total=${newTotalDisplaySteps}`);
         });
       } else {
         console.log("Pedometer not ready or initial anchor not set, not subscribing to watch.");
       }
     };
-    subscribeToSteps();
+    if (pedometerAvailable.current) {
+      subscribeToSteps();
+    } else {
+      console.log("Pedometer not available yet, waiting for permission/availability.");
+    }
     return () => {
       if (subscription) {
         console.log("Unsubscribing from Pedometer updates.");
@@ -164,7 +146,7 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
         subscription = null;
       }
     };
-  }, [initialStepsFromDailyStat, pedometerAvailable]);
+  }, [initialStepsFromDailyStat, pedometerAvailable.current]);
 
   // 3. Tối ưu gửi dữ liệu lên Backend
   // Sử dụng useCallback để hàm này không bị tạo lại mỗi khi component re-render,
@@ -233,18 +215,16 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
       const height = healthSnap.height / 100;
       const stepsWalked = currentSteps;
 
-      const strideLength = height * 0.45;
-      const distanceKm = (stepsWalked * strideLength) / 1000;
-      const caloriesPerKgPerKm = 1; // 1 calo/kg/km
-      const burned = distanceKm * weight * caloriesPerKgPerKm;
-      setCalories(burned);
-    }
-    // Chỉ tính toán nếu có đủ dữ liệu
-    if (healthSnap?.weight && healthSnap?.height) {
-      calulateCalories();
-    } else {
-      setCalories(0); // Đặt về 0 nếu không có dữ liệu cần thiết
-    }
+      if (weight && height && stepsWalked !== undefined && stepsWalked !== null) { // Add null/undefined check for stepsWalked
+        const strideLength = height * 0.45; // Estimated stride length
+        const distanceKm = (stepsWalked * strideLength) / 1000; // Distance walked in km
+        const caloriesPerKgPerKm = 1; // Approx 1 cal/kg/km for walking
+        const burned = distanceKm * weight * caloriesPerKgPerKm;
+        setCalories(burned);
+      } else {
+        setCalories(0);
+      }
+    };
     calulateCalories();
   }, [currentSteps, healthSnap.height, healthSnap.weight]);
 

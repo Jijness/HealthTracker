@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, Pressable, Platform } from 'react-native';
 import { icons } from '@/constants/icon';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,19 +17,28 @@ interface ActivitySummaryProps {
 export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySummaryProps) {
   const router = useRouter();
   const { t } = useTranslation();
+  // số bước bán đầu từ backend cho ngày hiện tại
+  const initialStepsFromDailyStat = dailyStat?.steps || 0;
 
-  const steps = dailyStat?.steps || 0;
+  // currentSteps sẽ là tổng số bước hiển thị trên UI
+  const [currentSteps, setCurrentSteps] = useState(initialStepsFromDailyStat);
+  // Số bước cuối cùng được gửi lên backend
+  const [lastSentSteps, setLastSentSteps] = useState(initialStepsFromDailyStat);
+  // Ref để theo dõi trạng thái sẵn sàng của Pedometer (có khả dụng và có quyền không)
+  const pedometerAvailable = useRef(false);
+  // Lưu trữ số bước *tổng cộng của thiết bị* tại thời điểm bắt đầu theo dõi
+  // Dùng để tính toán số bước *tăng thêm trong phiên hiện tại*
+  const deviceTotalStepsOnMount = useRef<number | null>(null);
+
+  // Ref cho thời điểm cuối cùng dữ liệu được gửi lên backend
+  const lastSendTime = useRef(Date.now());
+  const sendInterval = useRef(30000); // Khoảng thời gian mặc định để gửi (30 giây)
+
+
+
   const [sleepHours, setSleepHours] = useState<{ hours: number; minutes: number } | null>(null);
-
-  const [currentSteps, setCurrentSteps] = useState(steps);
-
   const [calories, setCalories] = useState(0);
 
-  const [lastSentSteps, setLastSentSteps] = useState(steps);
-  const lastSendTime = useRef(Date.now());
-  const sendInterval = useRef(30000);
-
-  const pedometerAvailable = useRef(false);
 
   useEffect(() => {
     if (dailyStat?.sleepTime && dailyStat?.wakeTime) {
@@ -50,93 +59,172 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
     }
   }, [dailyStat?.sleepTime, dailyStat?.wakeTime]);
 
-  useEffect(() => {
-    setCurrentSteps(steps);
-    setLastSentSteps(steps);
-    lastSendTime.current = Date.now();
-  }, [steps]);
 
-  // Kiểm tra quyền và tính khả dụng của Pedometer
+  // Effect để cập nhật currentSteps và lastSentSteps khi initialDailySteps từ backend thay đổi (ví dụ: sang ngày mới)
+  useEffect(() => {
+    setCurrentSteps(initialStepsFromDailyStat);
+    setLastSentSteps(initialStepsFromDailyStat);
+    lastSendTime.current = Date.now();
+    // Khi initialDailySteps thay đổi, cần reset điểm neo của pedometer
+    // để nó được tính toán lại cho ngày mới.
+    deviceTotalStepsOnMount.current = null;
+  }, [initialStepsFromDailyStat]);
+
+  // 1, Kiểm tra quyền và tính khả dụng của Pedometer, thiết lập điểm neo ban đầu
   useEffect(() => {
     const checkPedometerAvailability = async () => {
       const isAvailable = await Pedometer.isAvailableAsync();
       pedometerAvailable.current = isAvailable;
       if (isAvailable) {
+        const { status } = await Pedometer.getPermissionsAsync(); // Lấy trạng thái quyền hiện tại
         if (status !== 'granted') {
+          console.log('Pedometer permission not granted, requesting...');
           const { status: newStatus } = await Pedometer.requestPermissionsAsync();
-          if (newStatus !== 'granted') {
-            console.error('Pedometer permission not granted!');
+          if (newStatus === 'granted') {
+            console.log('Pedometer permission granted!');
+            pedometerAvailable.current = true; // Cập nhật lại trạng thái
+          } else {
+            console.error('Pedometer permission not granted after request!');
             pedometerAvailable.current = false;
+            return;
           }
+        } else {
+          console.log('Pedometer permission already granted.');
+          pedometerAvailable.current = true;
         }
       } else {
         console.log("Pedometer is not available on this device.");
+        pedometerAvailable.current = false;
       }
     };
     checkPedometerAvailability();
   }, []);
 
 
-  // Theo dõi bước chân bằng watchStepCount (cho Android khi getStepCountAsync không hỗ trợ)
+  // 2, Theo dõi bước chân từ Pedometer và tính toán số bước hiển thị
   useEffect(() => {
     let subscription: any = null;
+
     const subscribeToSteps = async () => {
       if (pedometerAvailable.current) {
+        if (deviceTotalStepsOnMount.current === null) {
+          const end = new Date();
+          const start = new Date(end);
+          try {
+            // Tạm thời, để loại bỏ lỗi, hãy loại bỏ getStepCountAsync trong useEffect này
+            // nếu bạn đang nhắm mục tiêu Android cụ thể
+            // Hoặc chỉ gọi nó nếu Platform.OS === 'ios'
+            if (Platform.OS === 'android') {
+              const result = await Pedometer.getStepCountAsync(start, end);
+              deviceTotalStepsOnMount.current = result.steps;
+              console.log(`Initial Android Pedometer total: ${result.steps}`);
+            } else {
+              // Trên Android, watchStepCount sẽ cung cấp tổng số bước từ khi nó được bắt đầu.
+              // Chúng ta sẽ lấy điểm neo từ lần đầu tiên watchStepCount báo cáo.
+              console.log("Pedometer watch will set initial anchor on first update for Android.");
+            }
+
+          } catch (error) {
+            console.log("Error setting initial pedometer anchor:", error);
+            // Vẫn cho phép watchStepCount chạy, nhưng có thể bị sai lệch nếu không có điểm neo chính xác.
+          }
+        }
+        console.log("Subscribing to Pedometer updates.");
         subscription = Pedometer.watchStepCount(result => {
-          // Quan trọng: Sử dụng hàm cập nhật state để tránh race conditions
-          setCurrentSteps((prevSteps: number) => Math.max(prevSteps, steps) + result.steps);
+          // 'result.steps' là TỔNG số bước mà thiết bị đã ghi nhận từ đầu ngày.
+          // Chúng ta cần tính toán số bước *mới được thêm* kể từ điểm neo của mình.
+          if (deviceTotalStepsOnMount.current === null) {
+            // Nếu đây là lần đầu tiên watchStepCount báo cáo, lấy đây làm điểm neo của thiết bị
+            deviceTotalStepsOnMount.current = result.steps;
+            console.log(`Pedometer: First update, setting device total steps anchor to ${result.steps}`);
+          }
+          // Số bước mới được ghi nhận trong phiên hiện tại từ pedometer
+          // Đảm bảo không âm, nếu điểm neo chưa có thì coi như 0
+          const stepsFromPedometerInSession = deviceTotalStepsOnMount.current !== null
+            ? Math.max(0, result.steps - deviceTotalStepsOnMount.current)
+            : 0;
+          // Tổng số bước hiển thị là:
+          // số bước ban đầu từ backend + số bước mới được Pedometer ghi nhận trong phiên này.
+          const newTotalDisplaySteps = initialStepsFromDailyStat + stepsFromPedometerInSession;
+          // Cập nhật state currentSteps, đảm bảo số bước không bao giờ giảm
+          setCurrentSteps((prev: number) => Math.max(prev, newTotalDisplaySteps));
+
+          // Log để gỡ lỗi
+          console.log(`Pedometer update: Device total=${result.steps}, Anchor: (session start total)=${deviceTotalStepsOnMount.current}, Steps in session=${stepsFromPedometerInSession}, Display Total=${newTotalDisplaySteps}`);
         });
+      } else {
+        console.log("Pedometer not ready or initial anchor not set, not subscribing to watch.");
       }
     };
     subscribeToSteps();
     return () => {
       if (subscription) {
+        console.log("Unsubscribing from Pedometer updates.");
         subscription.remove();
+        subscription = null;
       }
     };
-  }, [steps, pedometerAvailable]);
+  }, [initialStepsFromDailyStat, pedometerAvailable]);
 
-  // Gui step cho backend sau khi gia tri thay doi 1 khoang dang ke
-  useEffect(() => {
-    const sendStepsOnBackend = async () => {
+  // 3. Tối ưu gửi dữ liệu lên Backend
+  // Sử dụng useCallback để hàm này không bị tạo lại mỗi khi component re-render,
+  // giúp cho useEffect sử dụng nó không bị chạy lại không cần thiết.
+  const sendStepsToBackend = useCallback(async (stepsToSend: number) => {
+    // Chỉ gửi nếu số bước hiện tại lớn hơn số bước cuối cùng đã gửi
+    if (stepsToSend > lastSentSteps) {
       try {
         const token = await AsyncStorage.getItem('token');
         if (!token) {
-          console.error('Authentication token not found.');
+          console.log('No token found. Cannot send steps.');
+          router.replace('/(authenticate)/login');
           return;
         }
-        const currentTime = Date.now();
-        const timeElapsed = currentTime - lastSendTime.current;
-        const stepsDifference = Math.abs(currentSteps - lastSentSteps);
 
-        if ((stepsDifference >= 20 || timeElapsed >= sendInterval.current) &&
-          currentSteps > lastSentSteps) {
-          const response = await fetch(`${API_BASE_URL}/dailyStat/step`, {
-            method: 'PATCH',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-            body: JSON.stringify({ steps: currentSteps }),
-          });
-          if (response.ok) {
-            console.log('Steps updated on backend:', currentSteps);
-            setLastSentSteps(currentSteps);
-            lastSendTime.current = currentTime;
-            // Điều chỉnh thời gian gửi dựa trên tốc độ thay đổi bước chân
-            sendInterval.current = stepsDifference < 100 ? 30000 : 15000; // Gửi nhanh hơn nếu đi nhanh
-          } else {
-            console.error('Failed to update steps:', await response.json());
-          }
+        // Gọi API PATCH để cập nhật bước chân
+        const response = await fetch(`${API_BASE_URL}/dailyStat/step`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+          body: JSON.stringify({ steps: stepsToSend }), // Gửi một giá trị duy nhất như backend mong đợi
+        });
+
+        if (response.ok) {
+          console.log('Steps sent to backend successfully:', stepsToSend);
+          setLastSentSteps(stepsToSend); // Cập nhật state lastSentSteps
+          lastSendTime.current = Date.now(); // Cập nhật thời gian gửi cuối cùng
+        } else {
+          const errorData = await response.json();
+          console.error('Failed to send steps to backend:', errorData.message || response.statusText);
         }
       } catch (error) {
-        console.error('Error updating steps:', error);
+        console.error('Error sending steps to backend:', error);
       }
-    };
+    }
+  }, [lastSentSteps]);
 
-    const intervalId = setInterval(sendStepsOnBackend, 10000); // Kiểm tra mỗi 10 giây
-    return () => clearInterval(intervalId);
-  }, [currentSteps, lastSentSteps]);
+  // 4. Thiết lập useEffect để gửi dữ liệu lên backend định kỳ
+  // Effect để kiểm tra và gửi dữ liệu lên backend định kỳ
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const currentTime = Date.now();
+      const timeElapsed = currentTime - lastSendTime.current;
+      const stepsDifference = Math.abs(currentSteps - lastSentSteps);
+
+      // Điều kiện gửi: 
+      // 1. Số bước đã tăng lên đáng kể (>= 20) HOẶC đủ thời gian đã trôi qua (>= sendIntervalRef.current)
+      // 2. Số bước hiện tại phải lớn hơn số bước cuối cùng đã gửi
+      if ((stepsDifference >= 20 || timeElapsed >= sendInterval.current) && currentSteps > lastSentSteps) {
+        console.log(`Triggering send: currentSteps=${currentSteps}, lastSentSteps=${lastSentSteps}, stepsDiff=${stepsDifference}, timeElapsed=${timeElapsed}`);
+        sendStepsToBackend(currentSteps);
+        // Điều chỉnh thời gian gửi dựa trên tốc độ thay đổi bước chân
+        sendInterval.current = stepsDifference < 100 ? 30000 : 15000; // Gửi nhanh hơn nếu đi nhanh (delta lớn)
+      }
+    }, 10000); // Kiểm tra mỗi 10 giây một lần
+
+    return () => clearInterval(interval); // Dọn dẹp interval khi component unmount
+  }, [currentSteps, lastSentSteps, sendStepsToBackend]);
 
   // Tinh toan calo dot chay dua tren buoc chan
   useEffect(() => {
@@ -150,6 +238,12 @@ export default function ActivitySummary({ dailyStat, healthSnap }: ActivitySumma
       const caloriesPerKgPerKm = 1; // 1 calo/kg/km
       const burned = distanceKm * weight * caloriesPerKgPerKm;
       setCalories(burned);
+    }
+    // Chỉ tính toán nếu có đủ dữ liệu
+    if (healthSnap?.weight && healthSnap?.height) {
+      calulateCalories();
+    } else {
+      setCalories(0); // Đặt về 0 nếu không có dữ liệu cần thiết
     }
     calulateCalories();
   }, [currentSteps, healthSnap.height, healthSnap.weight]);
@@ -245,7 +339,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  hydrateBox: { 
+  hydrateBox: {
     width: '100%',
     flexDirection: 'row',
     alignItems: 'center',

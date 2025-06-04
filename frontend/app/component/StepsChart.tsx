@@ -11,8 +11,8 @@ interface StepsChartProps {
 
 export default function Steps({ data }: StepsChartProps) {
     const stepData = data.map(item => {
-        if (!item.step) return 0;
-        return item.step;
+        if (!item.steps) return 0;
+        return item.steps;
     });
     const { t } = useTranslation();
     const labels = data.map(item => new Date(item.date).toLocaleDateString('vi-VN', { month: 'numeric', day: 'numeric' }));
